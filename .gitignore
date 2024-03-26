@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# visual studio
+
+# qt?

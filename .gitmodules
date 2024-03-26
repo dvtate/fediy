@@ -1,0 +1,6 @@
+[submodule "third_party/userver"]
+	path = third_party/userver
+	url = https://github.com/userver-framework/userver
+[submodule "third_party/json"]
+	path = third_party/json
+	url = https://github.com/nlohmann/json
