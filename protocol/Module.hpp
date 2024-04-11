@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cinttypes>
 #include <string>
+#include <optional>
+#include <vector>
 
 #include "ModuleInfo.hpp"
 #include "Msg.hpp"
@@ -16,10 +18,20 @@ public:
     // Basic module id info for checking message compatibility
     ModuleInfo m_info;
 
+    explicit Module(const std::string& path);
+
     void start();
 
     void stop();
 
-    void send_message(Msg msg);
+    // Update message: reverse to/from and update payload
+    bool send_message(Msg& msg);
+
+protected:
+    // Message Queue
+    std::vector<Msg> m_queue;
+
+    // .so file
+    std::string m_binary;
 
 };

@@ -5,24 +5,24 @@
 #include <cctype>
 #include <cinttypes>
 #include <filesystem>
+#include <cstring>
 
 #include "defs.hpp"
 
+/**
+ * INI Config file abstract base class
+ */
 class Config {
 public:
     Config() = default;
     virtual ~Config() = default;
 
     bool parse(const std::string& path);
-    
-    virtual const char* section() = 0;
-
 
 protected:
-    virtual bool set_key(const std::string& key, const std::string& value) = 0;
-    
-    static int ini_parse_handler(void* cfg, const char* section, const char* key, const char* value);
+    virtual int set_key(const char* section, const char* key, const char* value) = 0;
 };
+
 
 class ServerConfig : public Config {
 public:
@@ -30,28 +30,28 @@ public:
     virtual ~ServerConfig() = default;
 
     /// Where files are stored
-    std::string m_data_dir;
-
-    virtual const char* section() override {
-        return "";
-    }
+    std::string m_data_dir{"/opt/fedd/data"};
 
 protected:
-    virtual bool set_key(const std::string& key, const std::string& value) override {
+    virtual int set_key(const char* section, const char* key, const char* value) override {
+        // No section
+        if (section[0] != '\0')
+            return false;
+
         // Where files are stored
-        if (key == "DATA_DIR") {
+        if (strcmp(key, "data_dir") == 0) {
             std::error_code ec;
             if (!std::filesystem::is_directory(value, ec)) {
-                LOG_ERR("Config file: DATA_DIR invalid path: " <<value <<std::endl);
+                LOG_ERR("Config file: data_dir invalid path: " <<value <<std::endl);
             }
             if (ec.value() != 0) {
                 LOG_ERR("filesystem::is_directory failed: " <<ec.message() <<std::endl);
             }
             m_data_dir = value;
-            return true;
+            return 0;
+        } else {
+            return 1; // invalid key
         }
-
-        return false;
     }
 };
 

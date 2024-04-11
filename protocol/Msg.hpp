@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+#include <memory>
 
 #include "ModuleInfo.hpp"
 
@@ -22,31 +23,39 @@ struct MsgContactInfo {
 
 };
 
+
+/**
+ * Message between users, apps, servers, etc.
+ */
 struct Msg {
     static uint64_t unique_msg_id;
     uint64_t m_id;
 
-    MsgContactInfo m_from;
-    MsgContactInfo m_to;
+    MsgContactInfo m_orig;
+    MsgContactInfo m_dest; // should be local so const
 
     std::string m_payload;
 
     bool m_response_expected;
 
     Msg(
-        MsgContactInfo from, 
-        MsgContactInfo to,
+        MsgContactInfo origin, 
+        MsgContactInfo destination,
         std::string payload,
         bool response_expected = false
     ):
         m_id(unique_msg_id++),
-        m_from(from),
-        m_to(to),
-        m_payload(payload),
-        m_response_expected(response_expected)
+        m_orig(std::move(origin)),
+        m_dest(std::move(destination)),
+        m_payload(std::move(payload)),
+        m_response_expected(std::move(response_expected))
     {
     }
 
     ~Msg() = default;
 };
 
+/**
+ * For a reply, the message orig+dest are used in opposite places and m_payload is overwritten 
+ */
+using Reply = Msg;
