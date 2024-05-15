@@ -11,12 +11,12 @@ enum class MsgType : uint8_t {
     // ??
 };
 
-struct MsgContactInfo {
+struct MsgOrigin {
     char* m_server{nullptr};
     char* m_user{nullptr};
     ModuleInfo m_app;
 
-    ~MsgContactInfo() {
+    ~MsgOrigin() {
         free(m_server);
         free(m_user);
     }
@@ -31,16 +31,16 @@ struct Msg {
     static uint64_t unique_msg_id;
     uint64_t m_id;
 
-    MsgContactInfo m_orig;
-    MsgContactInfo m_dest; // should be local so const
+    MsgOrigin m_orig;
+    ModuleInfo m_dest;
 
     std::string m_payload;
 
     bool m_response_expected;
 
     Msg(
-        MsgContactInfo origin, 
-        MsgContactInfo destination,
+        MsgOrigin origin, 
+        ModuleInfo destination,
         std::string payload,
         bool response_expected = false
     ):

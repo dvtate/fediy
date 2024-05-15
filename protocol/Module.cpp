@@ -50,6 +50,6 @@ void Module::stop() {
 }
 
 
-bool Module::send_message(Msg& msg) {
+bool Module::send_message(Msg* msg) {
 
 }
