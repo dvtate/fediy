@@ -28,3 +28,5 @@ Architecture?:
 - Library: utils for interacting with other apps on the platform
 - Apps: link with libray to gain access to authentication and stuff
 	- Apps are run and stopped by the platform
+
+
