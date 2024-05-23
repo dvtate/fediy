@@ -50,6 +50,7 @@ protected:
             m_data_dir = value;
             return 0;
         } else {
+            LOG_ERR("Config file: invalid key: " <<key);
             return 1; // invalid key
         }
     }

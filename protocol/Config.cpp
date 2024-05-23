@@ -6,6 +6,7 @@
 ServerConfig g_server_config;
 
 bool Config::parse(const std::string& path) {
+    LOG("Loading Config file: " << path);
     return ini_parse(
         path.c_str(),
         [](void* cfg, auto section, auto key, auto value){ 

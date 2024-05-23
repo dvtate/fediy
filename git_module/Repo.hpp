@@ -16,8 +16,6 @@ class Repo {
     // What is the name of the repo
     std::string m_reponame;
 
-    // Local copy of the repo
-    std::uinique_ptr<GitRepo> m_local_repo;
 };
 
 // How are we gonna show users?? emails no longer necessarily globally unique...

@@ -1,4 +1,4 @@
-
+#include "DecisionTree.hpp"
 
 
 class Ctx {
@@ -20,7 +20,7 @@ struct Req {
 
 // 
 extern "C" {
-    void request_handler(const Req& request, ) {}
+    void request_handler(const Req& request, const User& user) {}
 
     void start() { }
 

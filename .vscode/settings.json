@@ -81,6 +81,12 @@
         "typeindex": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "strstream": "cpp",
+        "coroutine": "cpp",
+        "netfwd": "cpp",
+        "future": "cpp",
+        "latch": "cpp",
+        "text_encoding": "cpp"
     }
 }
