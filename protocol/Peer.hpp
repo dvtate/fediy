@@ -26,7 +26,7 @@ public:
         m_expire_ts(expire_ts)
     {}
 
-    bool is_expired(const time_t now = std::time(0)) {
+    [[nodiscard]] bool is_expired(const time_t now = std::time(nullptr)) const {
         return now > m_expire_ts;
     }
 

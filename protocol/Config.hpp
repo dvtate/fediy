@@ -24,13 +24,13 @@ protected:
 };
 
 
-class ServerConfig : public Config {
+class AppConfig : public Config {
 public:
-    ServerConfig() = default;
-    virtual ~ServerConfig() = default;
+    AppConfig() = default;
+    virtual ~AppConfig() = default;
 
     /// Where files are stored
-    std::string m_data_dir{"/opt/fedd/data"};
+    std::string m_data_dir{"/opt/fediy/data"};
 
 protected:
     virtual int set_key(const char* section, const char* key, const char* value) override {
@@ -55,5 +55,3 @@ protected:
         }
     }
 };
-
-extern ServerConfig g_server_config;

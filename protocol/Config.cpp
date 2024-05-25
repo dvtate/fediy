@@ -2,9 +2,6 @@
 
 #include "Config.hpp"
 
-
-ServerConfig g_server_config;
-
 bool Config::parse(const std::string& path) {
     LOG("Loading Config file: " << path);
     return ini_parse(
