@@ -10,3 +10,9 @@
 [submodule "third_party/mongoose"]
 	path = third_party/mongoose
 	url = https://github.com/cesanta/mongoose
+[submodule "third_party/SQLiteCpp"]
+	path = third_party/SQLiteCpp
+	url = git@github.com:SRombauts/SQLiteCpp.git
+[submodule "third_party/seastar"]
+	path = third_party/seastar
+	url = git@github.com:scylladb/seastar.git

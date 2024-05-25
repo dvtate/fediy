@@ -3,4 +3,17 @@
 
 class Server {
 
+/*
+    Endpoints:
+    /portal/*  -- management portal frontend
+        - 
+
+
+    /protocol 
+
+*/
+/* 
+ * 
+ */
 };
+

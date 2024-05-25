@@ -9,31 +9,32 @@
 #include "../util/RWMutex.hpp"
 
 #include "Peer.hpp"
-#include "User.hpp"
+#include "LocalUser.hpp"
 
 
 class Cache {
     std::unordered_map<std::string, std::shared_ptr<Peer>> m_peers;
     RWMutex m_peers_mtx;    
-    std::unordered_map<std::string, std::shared_ptr<User>> m_users;
+    std::unordered_map<std::string, std::shared_ptr<LocalUser>> m_local_users; // this shouldn't need to be a shared_ptr
     RWMutex m_users_mtx;
 
-
+public:
     void load_peers_from_db();
 
     void prune();
 
-
     template<class... Args>
-    std::shared_ptr<Peer> add_peer(std::string domain, Args&&... args) {
-        m_peers.emplace(std::move(domain), ...args);
+    auto add_peer(std::string domain, Args&&... args) -> auto {
+        RWMutex::LockForWrite lock{m_peers_mtx};
+        return m_peers.emplace(domain, args...);
     }
     std::shared_ptr<Peer> get_peer(const std::string& domain);
 
     template<class... Args>
-    std::shared_ptr<Peer> add_user(std::string username, Args&&... args) {
-        m_peers.emplace(std::move(username), ...args);
+    auto add_user(std::string token, Args&&... args) -> auto {
+        RWMutex::LockForWrite lock{m_users_mtx};
+        return m_local_users.emplace(token, args...);
     }
-    std::shared_ptr<Peer> get_user(const std::string& username);
+    std::shared_ptr<LocalUser> get_user(const std::string& username);
 
 };

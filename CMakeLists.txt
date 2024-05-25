@@ -3,10 +3,14 @@ project(gitfed CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Enable userver libraries that are needed in this project
-set(USERVER_FEATURE_POSTGRESQL ON CACHE BOOL "" FORCE)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/SQLiteCpp)
 
-# Add userver dependency
-add_subdirectory(third_party/userver)
-userver_setup_environment()
-
+file(GLOB protocol_server_sources protocol/*.cpp)
+add_executable(protocol_server ${protocol_server_sources})
+# target_include_directories(protocol_server protocol/)
+target_link_libraries(protocol_server
+  SQLiteCpp
+  sqlite3
+  pthread
+  dl
+  )

@@ -8,7 +8,6 @@
 #include "DB.hpp"
 
 class App {
-protected:
     Cache m_cache;
     Auth m_auth;
     Server m_server;

@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <cstring>
 
-#include "defs.hpp"
+#include "globals.hpp"
 
 /**
  * INI Config file abstract base class
