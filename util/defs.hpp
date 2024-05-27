@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-
 // TODO better logging system
 #ifdef DEBUG
 #define LOG_ERR(MSG) std::cerr << MSG <<std::endl;

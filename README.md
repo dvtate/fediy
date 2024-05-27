@@ -1,6 +1,19 @@
-# git-fed
-
 # Federated Git
+
+## Big Features
+- Sever app mgmt
+- SSO
+- Collaboration (ie - git)
+
+## App Ideas
+- Git-IY: GitLab killer 
+- Blog-IY: Wordpress killer
+- Chat-IY: Matrix competitor
+  - text, vc, teams, etc.
+- Social-IY: Mastodon competitor
+- Wiki-IY: mediawiki killer
+- Edit-IY: Google docs killer
+- Vid-IY: peertube competitor (integrate with grayjay)
 
 Git FS manager:
 - handles local copies of git repos

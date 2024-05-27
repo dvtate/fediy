@@ -1,6 +1,8 @@
 #pragma once
 
+
 #include "seastar/core/future.hh"
+#include "seastar/core/app-template.hh"
 
 #include "../util/defs.hpp"
 
@@ -16,11 +18,17 @@ class App {
     Auth m_auth;
     Server m_server;
     DB m_db;
+    seastar::app_template m_app;
+
+    static seastar::app_template::config get_cfg() {
+        seastar::app_template::config ret;
+        ret.name = "Fed It Yourself";
+        ret.description = "Self-hostable federation protocol, daemon, and app manager.";
+        return ret;
+    }
 
 public:
-    App() {
-        init();
-    }
+    App(): m_app(get_cfg()) {}
 
     bool init() {
         if (!m_config.parse(FEDIY_CONFIG_FILE_PATH))
@@ -31,6 +39,10 @@ public:
     }
 
     std::shared_ptr<Peer> add_peer(std::string domain);
+
+    void run() {
+
+    }
 
     friend class Cache;
     friend class Auth;

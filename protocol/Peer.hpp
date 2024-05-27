@@ -7,7 +7,8 @@
 
 class PeerAuth {
     /// Bearer token for authenticating endpoints
-    std::string m_bearer_token;
+    std::string m_bearer_token_they_use;
+    std::string m_bearer_token_we_use;
 
     /// AES token for sending encrypted data
     std::string m_aes_key; // TODO protect this from other threads, securely delete, etc.

@@ -19,7 +19,9 @@ class Server {
         - GET /pubkey
         - POST /connect
 
+    /[app_id]/* -- route to relevant app
 */
+
 /* 
  * 
  */

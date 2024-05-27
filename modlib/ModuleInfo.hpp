@@ -24,7 +24,6 @@ struct ModuleInfo {
         NAME_MISMATCH
     };
 
-
     bool compatible(const ModuleInfo& other) {
         return m_name == other.m_name && m_version_major == other.m_version_major;
     }
