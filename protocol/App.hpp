@@ -1,5 +1,7 @@
 #pragma once
 
+#include "seastar/core/future.hh"
+
 #include "../util/defs.hpp"
 
 #include "Cache.hpp"
@@ -17,8 +19,15 @@ class App {
 
 public:
     App() {
-        m_config.parse(FEDIY_CONFIG_FILE_PATH);
-        m_db.connect();
+        init();
+    }
+
+    bool init() {
+        if (!m_config.parse(FEDIY_CONFIG_FILE_PATH))
+            return false;
+        if (!m_db.connect())
+            return false;
+        return true;
     }
 
     std::shared_ptr<Peer> add_peer(std::string domain);

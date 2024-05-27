@@ -4,6 +4,7 @@
 #include "../third_party/SQLiteCpp/include/SQLiteCpp/SQLiteCpp.h"
 
 #include "Config.hpp"
+#include "Peer.hpp"
 
 class DB {
     // TODO use connection pool for requests
@@ -18,8 +19,7 @@ public:
 
     std::shared_ptr<Peer> get_peer(std::string domain);
 
-    bool setup_db() {
-    }
+    bool setup_db();
 };
 
 
