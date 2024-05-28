@@ -1,7 +1,7 @@
 # Federated Git
 
 ## Big Features
-- Sever app mgmt
+- Sever app management
 - SSO
 - Collaboration (ie - git)
 
@@ -14,6 +14,9 @@
 - Wiki-IY: mediawiki killer
 - Edit-IY: Google docs killer
 - Vid-IY: peertube competitor (integrate with grayjay)
+- Calendar-IY: Google Calendar killer
+- Cloud-IY: Nextcloud competitor
+
 
 Git FS manager:
 - handles local copies of git repos
@@ -66,6 +69,19 @@ MVP:
 	- peer can reject this request
 - 
 
+
+# Data Directory
+```
+    data_dir/
+        db.db3      - sqlite database
+        pubkey      -
+        config.ini  - global admin settings
+
+        apps/
+            example.app.id/
+                config.json
+                index.so
+```
 
 
 

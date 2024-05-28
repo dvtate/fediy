@@ -18,14 +18,11 @@ class Cache {
     std::unordered_map<std::string, std::shared_ptr<Peer>> m_peers;
     RWMutex m_peers_mtx;
 
-    // auth token ->
+    // bearer token -> user
     std::unordered_map<std::string, std::shared_ptr<LocalUser>> m_local_users; // this shouldn't need to be a shared_ptr
     RWMutex m_users_mtx;
 
-    // Better:
-    std::unordered_map<std::string, std::variant<std::shared_ptr<LocalUser>, std::shared_ptr<Peer>>> m_auth_tokens;
-    RWMutex m_auth_tokens_mtx;
-
+    // bearer token -> peer
     std::unordered_map<std::string, std::shared_ptr<Peer>> m_peer_domains;
 
 public:

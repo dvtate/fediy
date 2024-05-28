@@ -3,13 +3,17 @@
 #include "App.hpp"
 
 
+/**
+ * \returns null when not a peer invalid user token
+ */
 std::shared_ptr<Peer> Cache::get_peer(const std::string& domain) {
     m_peers_mtx.read_lock();
 
-    if (m_peers.contains(domain)) {
-        auto ret = m_peers[domain];
+    auto it = m_peers.find(domain);
+
+    if (it != m_peers.end()) {
         m_peers_mtx.read_unlock();
-        return ret;
+        return it->second;
     }
     m_peers_mtx.read_unlock();
     return g_app->add_peer(domain);
@@ -21,10 +25,10 @@ std::shared_ptr<Peer> Cache::get_peer(const std::string& domain) {
 std::shared_ptr<LocalUser> Cache::get_user(const std::string& token) {
     m_users_mtx.read_lock();
 
-    if (m_local_users.contains(token)) {
-        auto ret = m_local_users[token];
+    auto it = m_local_users.find(token);
+    if (it != m_local_users.end()) {
         m_users_mtx.read_unlock();
-        return ret;
+        return it->second;
     }
 
     // Probably invalid token

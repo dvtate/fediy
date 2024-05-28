@@ -5,13 +5,16 @@
 #include <ctime>
 #include <cstring>
 
+#include "Auth.hpp"
+
+
 class PeerAuth {
     /// Bearer token for authenticating endpoints
-    std::string m_bearer_token_they_use;
-    std::string m_bearer_token_we_use;
+    std::string m_bearer_token_we_accept;
+    std::string m_bearer_token_we_send;
 
     /// AES token for sending encrypted data
-    std::string m_aes_key; // TODO protect this from other threads, securely delete, etc.
+    std::string m_aes_key; // TODO mem protect, securely delete, etc.
 
     /// GPG public key
     std::string m_pubkey;

@@ -15,7 +15,7 @@ public:
 
     bool connect();
 
-    std::string get_user_password(std::string password);
+    char[128] get_user_password(const std::string& password);
 
     std::shared_ptr<Peer> get_peer(std::string domain);
 

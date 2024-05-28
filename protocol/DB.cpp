@@ -7,5 +7,5 @@
 
 
 bool DB::connect() {
-    m_db = std::make_unique<SQLite::Database>(g_app->m_config.m_data_dir + "/db.sql", SQLite::OPEN_FULLMUTEX | SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE );
+    m_db = std::make_unique<SQLite::Database>(g_app->m_config.m_data_dir + "/db.db3", SQLite::OPEN_FULLMUTEX | SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE );
 }

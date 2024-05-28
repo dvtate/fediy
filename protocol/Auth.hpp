@@ -1,9 +1,12 @@
 #pragma once
 
+
 #include <unordered_map>
 #include <random>
 #include <string>
 #include <list>
+
+#include "seastar/core/future.hh"
 
 #include "globals.hpp"
 #include "../util/RWMutex.hpp"
@@ -36,6 +39,5 @@ public:
     }
 
     std::shared_ptr<LocalUser> auth_local_user(const std::string& username, const std::string& password);
-
 
 };

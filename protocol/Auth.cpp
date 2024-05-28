@@ -1,12 +1,23 @@
+#include <openssl/sha.h>
+
 #include "Auth.hpp"
 
 #include "App.hpp"
 
 
+
+bool check_user_password()
+
+
 std::shared_ptr<LocalUser> Auth::auth_local_user(const std::string& username, const std::string& password) {
     // Make sure hash of password matches what's in database
-    if (password != g_app->m_db.get_user_password(username))
-        return nullptr;
+    unsigned char hashed_password[129];
+    unsigned char* hp = SHA512((unsigned char*) password.c_str(), password.size(), hashed_password);
+    auto db_pw = g_app->m_db.get_user_password(username);
+    for (int i = 0 ; i < 128; i++) {
+        if ((char)hp[i] != db_pw[i])
+            return nullptr;
+    }
 
     // Loop in extremely rare event of token overlap
     for (;;) {
@@ -20,3 +31,4 @@ std::shared_ptr<LocalUser> Auth::auth_local_user(const std::string& username, co
             return ret;
     }
 }
+

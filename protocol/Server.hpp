@@ -1,29 +1,18 @@
 #pragma once
 
+#include "seastar/core/future.hh"
+#include "seastar/http/httpd.hh"
+#include "seastar/http/function_handlers.hh"
+#include "seastar/http/request.hh"
 
 class Server {
 
-/*
-    Endpoints:
-    
-    /portal/*  -- management portal frontend
-        - GET/POST /login
-            - set cookie
-        - GET/POST /register
-            - set cookie
-        - GET/POST /home
-        - GET/POST /user/settings
-        - GET/POST /admin/settings
 
-    /protocol  -- establish p2p channel
-        - GET /pubkey
-        - POST /connect
 
-    /[app_id]/* -- route to relevant app
-*/
 
-/* 
- * 
- */
+    seastar::future<std::variant<std::shared_ptr<LocalUser>, std::shared_ptr<Peer>>> get_authenticated_user(const );
+
+    void set_routes(seastar::httpd::routes& routes);
+
 };
 

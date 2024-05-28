@@ -15,3 +15,8 @@ CREATE TABLE Users (
     contact TEXT
 );
 
+CREATE TABLE UserTokens (
+    token VARCHAR(32) PRIMARY KEY,
+    username VARCHAR(32) REFERENCES Users
+
+);

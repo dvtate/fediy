@@ -11,8 +11,6 @@
 class LocalUser {
 public:
     std::string m_username; // name@example.com
-    std::string m_bearer_token;
-    time_t m_token_expiration_ts;
 
     LocalUser(std::string username, std::string bearer_token, time_t token_expiration_ts):
         m_username(std::move(username)),
