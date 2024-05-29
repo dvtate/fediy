@@ -36,6 +36,16 @@ std::shared_ptr<LocalUser> Cache::get_user(const std::string& token) {
 }
 
 void Cache::prune() {
+    auto it_tok_end = m_user_auth_tokens.begin();
+    for (; it_tok_end != m_user_auth_tokens.end(); it_tok_end++)
+        if (it_tok_end->is_expired())
+            break;
+    if (it_tok_end != it_tok_end) {
+        // some auth tokens expired
+        for (auto it = m_user_auth_tokens.begin(); it != it_tok_end; it++) {
+            m_local_users.erase(it->user_token);
+        }
+    }
     std::erase_if(m_local_users, [](const auto& item) {
         const auto& [token, user] = item;
         return user->is_auth_expired();

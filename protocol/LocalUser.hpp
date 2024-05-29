@@ -12,13 +12,12 @@ class LocalUser {
 public:
     std::string m_username; // name@example.com
 
-    LocalUser(std::string username, std::string bearer_token, time_t token_expiration_ts):
-        m_username(std::move(username)),
-        m_bearer_token(std::move(bearer_token)),
-        m_token_expiration_ts(token_expiration_ts)
+    LocalUser(std::string username):
+        m_username(std::move(username))
     {}
 
     bool is_auth_expired(const time_t now = std::time(0)) {
         return now > m_token_expiration_ts;
     }
+
 };

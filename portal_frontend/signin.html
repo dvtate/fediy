@@ -1,1 +1,39 @@
-enter login creds
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Home</title>
+    <meta name="description" content="Your home for federated apps" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/minstyle.io@2.0.2/dist/css/minstyle.io.min.css" />
+
+    <style>
+        /* div {
+            border: 1px solid green;
+        } */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form action="/login" method="post">
+            <div class="ms-form-group">
+                <label for="Username">Username</label>
+                <input type="email" id="Username" placeholder="Username" autocomplete="username" />
+            </div>
+            <div class="ms-form-group">
+                <label for="Password">Password</label>
+                <input type="password" id="Password" placeholder="Password" autocomplete="current-password" />
+            </div>
+            <div class="ms-form-group">
+                <label for="chk-stay-logged-in">Stay Logged In</label>
+                <input type="checkbox" id="chk-stay-logged-in" />
+            </div>
+            <div><span id="invalid-reason"></span></div>
+            <br/>
+            <div><button type="submit" id="btn-submit" class="ms-primary">Sign In</button></div>
+        </form>
+    </div>
+
+</body>
+</html>

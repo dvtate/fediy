@@ -35,7 +35,7 @@ public:
 
     std::shared_ptr<Peer> add_peer(std::string domain);
 
-    bool run(int argc, char** argv);
+    void run(int argc, char** argv);
 };
 
 // Global Singleton set in main.c

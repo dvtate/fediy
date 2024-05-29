@@ -18,8 +18,8 @@ class Cache {
     std::unordered_map<std::string, std::shared_ptr<Peer>> m_peers;
     RWMutex m_peers_mtx;
 
-    // bearer token -> user
-    std::unordered_map<std::string, std::shared_ptr<LocalUser>> m_local_users; // this shouldn't need to be a shared_ptr
+    // bearer token -> username
+    std::unordered_map<std::string, std::string> m_local_users; // this shouldn't need to be a shared_ptr
     RWMutex m_users_mtx;
 
     // bearer token -> peer
@@ -42,6 +42,6 @@ public:
         RWMutex::LockForWrite lock{m_users_mtx};
         return m_local_users.emplace(token, args...);
     }
-    std::shared_ptr<LocalUser> get_user(const std::string& username);
+    std::string get_user_from_token(const std::string& token);
 
 };

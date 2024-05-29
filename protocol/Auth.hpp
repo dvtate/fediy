@@ -14,12 +14,31 @@
 #include "LocalUser.hpp"
 #include "Peer.hpp"
 
+
+struct UserAuthToken {
+    std::string user_token;
+    time_t expiration;
+
+    bool is_expired(const time_t now = std::time(nullptr)) {
+        return now > expiration;
+    }
+};
+
+// specialize std hash
+
 class Auth {
+public:
 
     static constexpr time_t USER_TOKEN_LIFETIME = 60 * 60 * 24 * 14; // 2 weeks
     static constexpr time_t PEER_TOKEN_LIEFTIME = 60 * 60 * 24 * 7; // 1 week
 
-public:
+    std::string m_pubkey;
+
+
+
+    bool init();
+
+
     static std::string get_auth_token() {
         // Create random generator that picks indicies charset
         // https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
@@ -38,6 +57,6 @@ public:
         return ret;
     }
 
-    std::shared_ptr<LocalUser> auth_local_user(const std::string& username, const std::string& password);
+    std::string auth_local_user(const std::string& username, const std::string& password);
 
 };

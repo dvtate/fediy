@@ -5,11 +5,15 @@
 #include "App.hpp"
 
 
+bool init() {
+    // Set public and private keys
+    std::string path = g_app->m_config.m_data_dir + "/pubkey";
 
-bool check_user_password()
+    return true;
+}
 
 
-std::shared_ptr<LocalUser> Auth::auth_local_user(const std::string& username, const std::string& password) {
+std::string Auth::auth_local_user(const std::string& username, const std::string& password) {
     // Make sure hash of password matches what's in database
     unsigned char hashed_password[129];
     unsigned char* hp = SHA512((unsigned char*) password.c_str(), password.size(), hashed_password);
@@ -22,10 +26,6 @@ std::shared_ptr<LocalUser> Auth::auth_local_user(const std::string& username, co
     // Loop in extremely rare event of token overlap
     for (;;) {
         auto token = Auth::get_auth_token();
-        auto ret = std::make_shared<LocalUser>(
-                username,
-                token,
-                std::time(nullptr) + USER_TOKEN_LIFETIME);
         bool success = g_app->m_cache.add_user(token, ret).second;
         if (success)
             return ret;
