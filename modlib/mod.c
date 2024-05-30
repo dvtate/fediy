@@ -19,7 +19,8 @@ struct fiy_response_t {
 
 //
 struct fiy_host_info_t {
-    const char* domain;
+    const char* domain;     // this is where the
+    const char* module_dir;  // this is where the module's files should go
 };
 
 /// This is used to provide callbacks to the host app

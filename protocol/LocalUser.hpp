@@ -7,17 +7,82 @@
 
 #include "Peer.hpp"
 
-// dtesta: is this even getting used?
 class LocalUser {
+    std::string m_name;
 public:
-    std::string m_username; // name@example.com
+    std::string m_username;
+    std::string m_email;
+    std::string m_locale; // TODO replace this with something better
+    time_t m_joined_ts;
+    std::string m_about;
 
-    LocalUser(std::string username):
+    explicit LocalUser(std::string username):
         m_username(std::move(username))
     {}
 
-    bool is_auth_expired(const time_t now = std::time(0)) {
-        return now > m_token_expiration_ts;
+    LocalUser(
+        std::string username,
+        std::string name,
+        std::string email,
+        std::string locale,
+        time_t joined_ts,
+        std::string about = ""
+    ):
+        m_username(std::move(username)),
+        m_name(std::move(name)),
+        m_email(std::move(email)),
+        m_locale(std::move(locale)),
+        m_joined_ts(joined_ts),
+        m_about(std::move(about))
+    {}
+
+    void set_name(std::string name) {
+        m_name = std::move(name);
+    }
+    std::string& get_name() {
+        return m_name.empty() ? m_username : m_name;
     }
 
+    class AuthToken {
+    public:
+        static constexpr time_t SESSION_LIFETIME = 60 * 60 * 24 * 14; // 2 weeks
+        static constexpr int TOKEN_LEN = 24;
+
+        std::shared_ptr<LocalUser> m_user;
+        std::string m_token;
+        time_t m_expiration;
+
+        static std::string get_token_string() {
+            // Create random generator that picks indices charset
+            // https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
+            static thread_local std::random_device rd;
+            static thread_local std::mt19937 gen(rd());
+            std::uniform_int_distribution<unsigned short> dist(1, 63);
+            const char charset[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_";
+
+            // Generate token using random chars from charset
+            // Probably a better way to do this that doesn't use operator+=
+            std::string ret;
+            ret.reserve(TOKEN_LEN);
+            for (int i = 0; i < TOKEN_LEN; i++)
+                ret += charset[dist(gen)];
+            return ret;
+        }
+
+        AuthToken(
+            std::shared_ptr<LocalUser> user,
+            std::string token = get_token_string(),
+            time_t expiration = std::time(nullptr) + SESSION_LIFETIME
+        ):
+            m_user(std::move(user)),
+            m_token(std::move(token)),
+            m_expiration(expiration)
+        {}
+
+        [[nodiscard]] bool is_expired(const time_t now = std::time(nullptr)) const {
+            return now > m_expiration;
+        }
+    };
+
+    static std::string login(const std::string& username, const std::string& password);
 };

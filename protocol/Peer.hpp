@@ -4,40 +4,63 @@
 #include <memory>
 #include <ctime>
 #include <cstring>
-
-#include "Auth.hpp"
-
+#include <random>
 
 class PeerAuth {
-    /// Bearer token for authenticating endpoints
-    std::string m_bearer_token_we_accept;
-    std::string m_bearer_token_we_send;
-
+public:
     /// AES token for sending encrypted data
     std::string m_aes_key; // TODO mem protect, securely delete, etc.
 
     /// GPG public key
     std::string m_pubkey;
 
+    /// Bearer token for authenticating endpoints
+    std::string m_bearer_token_we_send;
+    std::string m_bearer_token_we_accept;
+
     /// When do we need to refresh auth credentials?
     time_t m_expire_ts;
 
+
+    static constexpr time_t PEER_SESSION_LIFETIME = 60 * 60 * 24 * 7; // 1 week
+    static constexpr int TOKEN_LEN = 24;
+
+    static std::string get_token_string() {
+        // Create random generator that picks indices charset
+        // https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
+        static thread_local std::random_device rd;
+        static thread_local std::mt19937 gen(rd());
+        std::uniform_int_distribution<unsigned short> dist(1, 63);
+        const char charset[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_";
+
+        // Generate token using random chars from charset
+        // Probably a better way to do this that doesn't use operator+=
+        std::string ret;
+        ret.reserve(TOKEN_LEN);
+        for (int i = 0; i < TOKEN_LEN; i++)
+            ret += charset[dist(gen)];
+        return ret;
+    }
+
 public:
-    PeerAuth(std::string token, std::string sym_key, std::string pubkey, const time_t expire_ts):
-        m_bearer_token(std::move(token)),
+
+    PeerAuth(
+        std::string sym_key,
+        std::string pubkey,
+        std::string peer_provided_token,
+        std::string our_generated_token = get_token_string(),
+        const time_t expire_ts = std::time(nullptr) + PEER_SESSION_LIFETIME
+    ):
         m_aes_key(std::move(sym_key)),
         m_pubkey(std::move(pubkey)),
+        m_bearer_token_we_send(std::move(peer_provided_token)),
+        m_bearer_token_we_accept(std::move(our_generated_token)),
         m_expire_ts(expire_ts)
     {}
 
     [[nodiscard]] bool is_expired(const time_t now = std::time(nullptr)) const {
         return now > m_expire_ts;
     }
-
-    bool refresh();
-
-    std::string aes_encrypt(const std::string& msg);
-    std::string hash_with_bearer(std::string msg);
 
 };
 

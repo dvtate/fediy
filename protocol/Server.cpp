@@ -21,27 +21,7 @@ public:
     }
 };
 
-class AuthenticatedHandler : public httpd::handler_base {
-protected:
-    std::string m_user;
-public:
-    virtual future<std::unique_ptr<http::reply>>
-    handle(
-            const sstring& path,
-            std::unique_ptr<http::request> req, std::unique_ptr<http::reply> rep
-    ) final {
-
-    }
-
-    virtual future<std::unique_ptr<http::reply>>
-    authenticated_handler(
-            const sstring& path,
-            std::unique_ptr<http::request> req, std::unique_ptr<http::reply> rep
-    )
-};
-
 void set_routes(httpd::routes& routes) {
-    std::time(nullptr)
 /*
     Endpoints:
 

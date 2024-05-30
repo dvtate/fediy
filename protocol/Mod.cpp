@@ -61,11 +61,13 @@ bool Mod::load_conf() {
         }
         m_description = description.get<std::string>();
     }
+    return true;
 }
 
 bool Mod::start_module() {
-    auto m = dlopen(
+//    auto m = dlopen(
 
+    return true;
 }
 
 

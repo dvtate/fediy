@@ -18,6 +18,12 @@ struct RWMutex {
         m_readers--;
     }
 
+    void read_to_write() {
+        m_mtx.lock();
+        m_readers--;
+        while (m_readers > 0); // spinlock is kinda ugly but eh
+    }
+
     void write_lock() {
         m_mtx.lock();
         while (m_readers > 0); // spinlock is kinda ugly but eh

@@ -16,3 +16,6 @@
 [submodule "third_party/seastar"]
 	path = third_party/seastar
 	url = git@github.com:scylladb/seastar.git
+[submodule "third_party/inja"]
+	path = third_party/inja
+	url = https://github.com/pantor/inja

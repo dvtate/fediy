@@ -8,11 +8,5 @@
 class Server {
 
 
-
-
-    seastar::future<std::variant<std::shared_ptr<LocalUser>, std::shared_ptr<Peer>>> get_authenticated_user(const );
-
-    void set_routes(seastar::httpd::routes& routes);
-
 };
 

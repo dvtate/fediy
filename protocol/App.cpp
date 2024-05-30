@@ -5,18 +5,15 @@
 
 void App::run(int argc, char** argv) {
     // Note: order is important here
-    if (!m_config.parse(FEDIY_CONFIG_FILE_PATH)) {
+    if (m_config.m_error) {
         LOG_ERR("Failed to parse config file.");
         return;
     }
-    if (!m_db.connect()) {
-        LOG_ERR("Failed to connect to database.");
-        return;
-    }
-    if (!m_auth.init()) {
-        LOG_ERR("Failed to initialize Authentication component.");
-        return;
-    }
+
+    // Connect to datbase
+    m_db = std::make_unique<DB>(m_config.m_data_dir + "/db.db3");
+
+    // Start modules
     if (!m_mods.start_all()) {
         LOG_ERR("Failed to start modules.");
         return;

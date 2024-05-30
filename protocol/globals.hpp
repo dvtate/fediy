@@ -10,4 +10,3 @@
 class App;
 extern App* g_app;
 
-
