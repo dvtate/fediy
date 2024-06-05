@@ -38,6 +38,8 @@ public:
 };
 
 std::shared_ptr<LocalUser> DB::get_user(const std::string& username, std::string password) {
+    // TODO should hash password while waiting for DB response
+
     // Hash provided password
     unsigned char hashed_password[129];
     password += g_app->m_config.m_salt;

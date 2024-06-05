@@ -32,7 +32,7 @@ public:
 
     std::shared_ptr<LocalUser> get_user(const std::string& username);
     std::shared_ptr<LocalUser> get_user(const std::string& username, std::string password);
-    std::shared_ptr<LocalUser> add_user(const LocalUser& user, std::string password);
+    bool add_user(const LocalUser& user, std::string password);
 
 };
 
