@@ -19,3 +19,6 @@
 [submodule "third_party/inja"]
 	path = third_party/inja
 	url = https://github.com/pantor/inja
+[submodule "third_party/Mustache"]
+	path = third_party/Mustache
+	url = https://github.com/kainjow/Mustache

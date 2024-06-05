@@ -15,7 +15,7 @@
  */
 class Config {
 public:
-    bool m_error;
+    bool m_error{false};
 
     Config() = default;
     Config(const std::string& path): m_error(parse(path)) {}

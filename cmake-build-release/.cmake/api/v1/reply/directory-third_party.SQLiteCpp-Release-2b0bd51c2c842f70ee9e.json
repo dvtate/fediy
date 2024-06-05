@@ -1,0 +1,125 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"third_party/SQLiteCpp/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 363,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 368,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 369,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 370,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 381,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "libraries",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"third_party/SQLiteCpp/libSQLiteCpp.a"
+			],
+			"targetId" : "SQLiteCpp::@21e90e63ae767fbde207",
+			"targetIndex" : 28,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "headers",
+			"destination" : "include",
+			"paths" : 
+			[
+				{
+					"from" : "third_party/SQLiteCpp/include",
+					"to" : "."
+				}
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/SQLiteCpp",
+			"exportName" : "SQLiteCppTargets",
+			"exportTargets" : 
+			[
+				{
+					"id" : "sqlite3::@caa0b79f6b649755c4ba",
+					"index" : 36
+				},
+				{
+					"id" : "SQLiteCpp::@21e90e63ae767fbde207",
+					"index" : 28
+				}
+			],
+			"paths" : 
+			[
+				"third_party/SQLiteCpp/CMakeFiles/Export/31d559fcedc0800e90eb93f071f3b915/SQLiteCppTargets.cmake"
+			],
+			"type" : "export"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "share/SQLiteCpp",
+			"paths" : 
+			[
+				"third_party/SQLiteCpp/package.xml"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "lib/cmake/SQLiteCpp",
+			"paths" : 
+			[
+				"cmake-build-release/third_party/SQLiteCpp/cmake/SQLiteCppConfig.cmake",
+				"cmake-build-release/third_party/SQLiteCpp/cmake/SQLiteCppConfigVersion.cmake"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "third_party/SQLiteCpp",
+		"source" : "third_party/SQLiteCpp"
+	}
+}

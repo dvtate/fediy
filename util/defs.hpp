@@ -3,7 +3,7 @@
 #include <iostream>
 
 // TODO better logging system
-#ifdef DEBUG
+#ifdef FEDIY_DEBUG
 #define LOG_ERR(MSG) std::cerr << MSG <<std::endl;
 #define LOG(MSG) std::cout << MSG <<std::endl;
 #define DEBUG_LOG(MSG) std::cout << MSG <<std::endl;

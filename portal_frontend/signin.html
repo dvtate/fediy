@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Home</title>
     <meta name="description" content="Your home for federated apps" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/minstyle.io@2.0.2/dist/css/minstyle.io.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/minstyle.io@2.0.2/dist/css/minstyle.io.min.css" />
 
     <style>
         /* div {
             border: 1px solid green;
         } */
+        #invalid-reason {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Sign in to {{INSTANCE_DOMAIN}}</h1>
+        <h1>Sign in to {{domain}}</h1>
         <form action="/login" method="post">
             <div class="ms-form-group">
                 <label for="Username">Username</label>
@@ -30,7 +33,7 @@
                 <label for="chk-stay-logged-in">Stay Logged In</label>
                 <input type="checkbox" id="chk-stay-logged-in" />
             </div>
-            <div><span id="invalid-reason">{{INVALID_LOGIN_REASON}}</span></div>
+            <div><span id="invalid-reason">{{fail_reason}}</span></div>
             <br/>
             <div><button type="submit" id="btn-submit" class="ms-primary">Sign In</button></div>
         </form>

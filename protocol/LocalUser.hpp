@@ -10,26 +10,31 @@
 class LocalUser {
     std::string m_name;
 public:
+    // TODO how do we handle updating users safely?
     std::string m_username;
+    bool m_is_admin{false};
     std::string m_email;
-    std::string m_locale; // TODO replace this with something better
-    time_t m_joined_ts;
+    std::string m_locale; // TODO replace this with something better?
+    time_t m_joined_ts{0};
     std::string m_about;
 
-    explicit LocalUser(std::string username):
-        m_username(std::move(username))
+    LocalUser(std::string username, bool is_admin):
+        m_username(std::move(username)),
+        m_is_admin(is_admin)
     {}
 
     LocalUser(
-        std::string username,
         std::string name,
+        std::string username,
+        bool is_admin,
         std::string email,
         std::string locale,
         time_t joined_ts,
         std::string about = ""
     ):
-        m_username(std::move(username)),
         m_name(std::move(name)),
+        m_username(std::move(username)),
+        m_is_admin(is_admin),
         m_email(std::move(email)),
         m_locale(std::move(locale)),
         m_joined_ts(joined_ts),
@@ -39,9 +44,11 @@ public:
     void set_name(std::string name) {
         m_name = std::move(name);
     }
-    std::string& get_name() {
+    [[nodiscard]] const std::string& get_name() const {
         return m_name.empty() ? m_username : m_name;
     }
+
+    bool write_changes_to_db();
 
     class AuthToken {
     public:

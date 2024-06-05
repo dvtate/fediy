@@ -21,8 +21,7 @@ public:
     /// When do we need to refresh auth credentials?
     time_t m_expire_ts;
 
-
-    static constexpr time_t PEER_SESSION_LIFETIME = 60 * 60 * 24 * 7; // 1 week
+    static constexpr time_t SESSION_LIFETIME = 60 * 60 * 24 * 7; // 1 week
     static constexpr int TOKEN_LEN = 24;
 
     static std::string get_token_string() {
@@ -37,7 +36,8 @@ public:
         // Probably a better way to do this that doesn't use operator+=
         std::string ret;
         ret.reserve(TOKEN_LEN);
-        for (int i = 0; i < TOKEN_LEN; i++)
+        ret += '.'; // start with '.' to differentiate from user tokens
+        for (int i = 1; i < TOKEN_LEN; i++)
             ret += charset[dist(gen)];
         return ret;
     }
@@ -49,7 +49,7 @@ public:
         std::string pubkey,
         std::string peer_provided_token,
         std::string our_generated_token = get_token_string(),
-        const time_t expire_ts = std::time(nullptr) + PEER_SESSION_LIFETIME
+        const time_t expire_ts = std::time(nullptr) + SESSION_LIFETIME
     ):
         m_aes_key(std::move(sym_key)),
         m_pubkey(std::move(pubkey)),

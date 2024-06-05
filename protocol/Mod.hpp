@@ -4,6 +4,9 @@
 
 
 class Mod {
+protected:
+    void* m_handle{nullptr};
+
 public:
     std::string m_id;
     std::string m_name;
@@ -12,13 +15,15 @@ public:
 
     std::string m_error;
 
+
     explicit Mod(std::string id): m_id(std::move(id)) {}
 
     // Load module settings in metadata from fs
     bool load_conf();
 
     //
-    bool start_module();
+    bool start();
 
+    bool stop();
 };
 

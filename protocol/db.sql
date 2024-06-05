@@ -11,11 +11,12 @@ CREATE TABLE Peers (
 
 CREATE TABLE Users (
     username       VARCHAR(32) PRIMARY KEY,
+    isAdmin        INTEGER NOT NULL,
     name           VARCHAR(128) NOT NULL DEFAULT "",
     hashedPassword CHAR(128) NOT NULL,
     email          VARCHAR(255) NOT NULL DEFAULT "",
     locale         VARCHAR(8)   NOT NULL DEFAULT "en",
-    joinTs         UNSIGNED INTEGER NOT NULL,
+    joinTs         INTEGER UNSIGNED NOT NULL,
     about          TEXT DEFAULT ""
 );
 

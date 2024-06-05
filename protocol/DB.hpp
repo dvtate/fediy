@@ -2,7 +2,6 @@
 
 #include <mutex>
 
-// #include <SQLiteCpp/SQLiteCpp.h>
 #include "../third_party/SQLiteCpp/include/SQLiteCpp/SQLiteCpp.h"
 
 #include "Config.hpp"
@@ -33,7 +32,7 @@ public:
 
     std::shared_ptr<LocalUser> get_user(const std::string& username);
     std::shared_ptr<LocalUser> get_user(const std::string& username, std::string password);
-//    std::shared_ptr<LocalUser> add_user();
+    std::shared_ptr<LocalUser> add_user(const LocalUser& user, std::string password);
 
 };
 

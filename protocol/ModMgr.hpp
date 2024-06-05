@@ -27,4 +27,17 @@ public:
             ? ret->second
             : nullptr;
     }
+
+    std::vector<Mod*> get_mods() {
+
+    }
+
+    //
+    bool remove_mod(const std::string& id) {
+        Mod* m = get_mod(id);
+        if (!m)
+            return false;
+        m_mods.erase(id);
+        return m->stop();
+    }
 };

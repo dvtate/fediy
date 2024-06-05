@@ -4,7 +4,7 @@
 ///////
 
 struct fiy_request_t {
-    const char* url;
+    const char* path;
     const char* body;         // null = get request
     const char* domain;       // null = local
     const char* user;         // null = unauthenticated

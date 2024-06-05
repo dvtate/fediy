@@ -1,0 +1,25 @@
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=/opt/clion/bin/ninja/linux/x64/ninja -G Ninja -S /home/tate/Desktop/git-fed -B /home/tate/Desktop/git-fed/cmake-build-release
+-- Using c++ standard c++20
+-- CMake version: 3.29.3
+-- Project version: 3.3.1
+-- Using Stack Protection hardening
+-- CMAKE_CXX_COMPILER '/usr/bin/c++' 'GNU' '14.1.1'
+-- CMAKE_CXX_FLAGS                ' -Wall -Wextra -Wpedantic -Wswitch-enum -Wshadow -Wno-long-long'
+-- CMAKE_CXX_FLAGS_RELEASE        '-O3 -DNDEBUG'
+-- Compile sqlite3 from source in subdirectory
+CMake Warning (dev) at third_party/SQLiteCpp/CMakeLists.txt:390 (find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find cppcheck
+-- SQLITECPP_RUN_DOXYGEN OFF
+-- SQLITECPP_BUILD_EXAMPLES OFF
+-- SQLITECPP_BUILD_TESTS OFF
+-- Found Boost: /usr/include (found suitable version "1.83.0", minimum required is "1.73.0")
+-- Found Boost: /usr/include (found suitable version "1.83.0", minimum required is "1.73.0") found components: filesystem program_options thread unit_test_framework chrono atomic
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/tate/Desktop/git-fed/cmake-build-release

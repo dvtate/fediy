@@ -7,7 +7,7 @@
 DB::DB(const std::string& db_file):
     m_db(db_file,SQLite::OPEN_FULLMUTEX | SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE ),
     m_get_user_query(m_db, "SELECT username, name, hashedPassword, email, locale, joinTs, about FROM Users WHERE username = ?"),
-    m_add_user_query(m_db, "INSERT INTO Users (username, name, hashedPassword, email, locale, joinTs, about) VALUES (?, ?, ?, ?, ?, ?, ?)"),
+    m_add_user_query(m_db, "INSERT INTO Users (username, isAdmin, name, hashedPassword, email, locale, joinTs, about) VALUES (?, ?, ?, ?, ?, ?, ?)"),
     m_get_peer_query(m_db, "SELECT * FROM Peers WHERE domain = ?"),
     m_add_peer_query(m_db, "INSERT INTO Peers (domain, connectTs, bearerToken, symKey, pubkey, tokenExpireTs) VALUES (?, ?, ?, ?, ?, ?)")
 {
@@ -20,6 +20,23 @@ struct CleanupRoutine {
     ~CleanupRoutine() { m_action(); }
 };
 
+class DBQueryThreadSafety {
+    SQLite::Statement& m_stmt;
+    std::mutex& m_mtx;
+public:
+    DBQueryThreadSafety(
+        SQLite::Statement& statement,
+        std::mutex& mutex
+    ): m_stmt(statement), m_mtx(mutex) {
+        mutex.lock();
+    }
+    ~DBQueryThreadSafety() {
+        m_stmt.clearBindings();
+        m_stmt.reset();
+        m_mtx.unlock();
+    }
+};
+
 std::shared_ptr<LocalUser> DB::get_user(const std::string& username, std::string password) {
     // Hash provided password
     unsigned char hashed_password[129];
@@ -27,12 +44,7 @@ std::shared_ptr<LocalUser> DB::get_user(const std::string& username, std::string
     unsigned char* hp = SHA512((unsigned char*) password.c_str(), password.size(), hashed_password);
 
     // Thread safety
-    m_mtx.lock();
-    CleanupRoutine cleanup{[&]() {
-        m_get_user_query.clearBindings();
-        m_get_user_query.reset();
-        m_mtx.unlock();
-    }};
+    DBQueryThreadSafety lock{m_get_user_query, m_mtx};
 
     // Fetch relevant user from database
     m_get_user_query.bindNoCopy(0, username);
@@ -52,34 +64,48 @@ std::shared_ptr<LocalUser> DB::get_user(const std::string& username, std::string
 
     // Make user object
     return std::make_shared<LocalUser>(
+        m_get_user_query.getColumn(2).getString(),  // name
         username,
-        m_get_user_query.getColumn(1).getString(),  // name
-        m_get_user_query.getColumn(3).getString(),  // email
-        m_get_user_query.getColumn(4).getString(),  // locale
-        m_get_user_query.getColumn(5).getUInt(),  // join_ts
-        m_get_user_query.getColumn(6).getString()   // about
+        m_get_user_query.getColumn(1).getInt() != 0, // isAdmin
+        m_get_user_query.getColumn(4).getString(),  // email
+        m_get_user_query.getColumn(5).getString(),  // locale
+        m_get_user_query.getColumn(6).getUInt(),  // join_ts
+        m_get_user_query.getColumn(7).getString()   // about
     );
 }
 
 std::shared_ptr<LocalUser> DB::get_user(const std::string& username) {
     // Thread safety
-    m_mtx.lock();
-    CleanupRoutine cleanup{[&]() {
-        m_get_user_query.clearBindings();
-        m_get_user_query.reset();
-        m_mtx.unlock();
-    }};
+    DBQueryThreadSafety lock{m_get_user_query, m_mtx};
 
     // Fetch user from db
     m_get_user_query.bindNoCopy(0, username);
     if (!m_get_user_query.executeStep()) // no match
         return nullptr;
     return std::make_shared<LocalUser>(
-            username,
-            m_get_user_query.getColumn(1).getString(),  // name
-            m_get_user_query.getColumn(3).getString(),  // email
-            m_get_user_query.getColumn(4).getString(),  // locale
-            m_get_user_query.getColumn(5).getUInt(),  // join_ts
-            m_get_user_query.getColumn(6).getString()   // about
+        m_get_user_query.getColumn(2).getString(),  // name
+        username,
+        m_get_user_query.getColumn(1).getInt() != 0, // isAdmin
+        m_get_user_query.getColumn(4).getString(),  // email
+        m_get_user_query.getColumn(5).getString(),  // locale
+        m_get_user_query.getColumn(6).getUInt(),  // join_ts
+        m_get_user_query.getColumn(7).getString()   // about
     );
+}
+
+bool DB::add_user(const LocalUser& user, std::string password) {
+    // Hash provided password
+    unsigned char hashed_password[129];
+    password += g_app->m_config.m_salt;
+    unsigned char* hp = SHA512((unsigned char*) password.c_str(), password.size(), hashed_password);
+
+    // Thread safety
+    auto& q = m_add_user_query;
+    DBQueryThreadSafety lock{q, m_mtx};
+
+    q.bindNoCopy(0, user.m_username);
+    q.bind(1, (int32_t)user.m_is_admin);
+    q.bindNoCopy(2, user.get_name());
+    q.bindNoCopy(3, )
+    return true;
 }

@@ -7,10 +7,4 @@
 App* g_app;
 
 int main(int argc, char** argv) {
-    seastar::app_template app;
-    app.run(argc, argv, [] {
-        std::cout << seastar::smp::count << "\n";
-        g_app = new App();
-        return seastar::make_ready_future<>();
-    });
 }

@@ -64,10 +64,19 @@ bool Mod::load_conf() {
     return true;
 }
 
-bool Mod::start_module() {
-//    auto m = dlopen(
+bool Mod::start() {
+    std::string mod_path = g_app->m_config.m_data_dir + "/apps/" + m_id + "/module.so";
+    m_handle = dlopen(mod_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
+    if (m_handle == nullptr)
+        return false;
 
+//    dlsym(m_handle, "");
     return true;
 }
 
 
+bool Mod::stop() {
+    auto ret = dlclose(m_handle) == 0;
+    m_handle = nullptr;
+    return ret;
+}
