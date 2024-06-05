@@ -19,3 +19,6 @@
 [submodule "third_party/Mustache"]
 	path = third_party/Mustache
 	url = https://github.com/kainjow/Mustache
+[submodule "third_party/userver"]
+	path = third_party/userver
+	url = https://github.com/userver-framework/userver
