@@ -26,7 +26,7 @@ protected:
 
 public:
 
-    explicit DB(const std::string& db_file);
+    DB();
 
     std::shared_ptr<Peer> get_peer(std::string domain);
 

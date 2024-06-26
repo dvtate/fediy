@@ -5,37 +5,34 @@
 #include "Mod.hpp"
 
 class ModMgr {
-    std::map<std::string, Mod*> m_mods;
+    std::map<std::string, std::unique_ptr<Mod>> m_mods;
+
+public:
 
     void find_modules();
 
-public:
-    ModMgr() {
-        find_modules();
-    }
-
-    ~ModMgr() {
-        for (auto& [id, mod]: m_mods)
-            delete mod;
-    }
-
     bool start_all();
 
-    Mod* get_mod(const std::string& id) {
+    std::unique_ptr<Mod>& get_mod(const std::string& id) {
         auto ret = m_mods.find(id);
-        return (ret != m_mods.end())
-            ? ret->second
-            : nullptr;
+        if (ret != m_mods.end())
+            return ret->second;
+
+        static std::unique_ptr<Mod> not_found = nullptr;
+        return not_found;
     }
 
     std::vector<Mod*> get_mods() {
-
+        std::vector<Mod*> ret;
+        ret.reserve(m_mods.size());
+        for (auto& [id, mod]: m_mods)
+            ret.emplace_back(&*mod);
+        return ret;
     }
 
-    //
     bool remove_mod(const std::string& id) {
-        Mod* m = get_mod(id);
-        if (!m)
+        auto m = std::move(get_mod(id));
+        if (m == nullptr)
             return false;
         m_mods.erase(id);
         return m->stop();

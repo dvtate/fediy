@@ -5,24 +5,25 @@ project(fediy)
 set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/SQLiteCpp)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/seastar)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/drogon)
 
 file(GLOB protocol_server_sources protocol/*.cpp)
 add_executable(protocol_server ${protocol_server_sources}
     third_party/inih/ini.c
-    protocol/ProtocolActions.cpp
     protocol/ProtocolActions.hpp
     protocol/Mod.cpp
     protocol/Mod.hpp
     protocol/ModMgr.cpp
     protocol/ModMgr.hpp
-    protocol/Server.cpp
-    protocol/routes.cpp
-    protocol/routes.hpp
-    util/parse_cookie_header.hpp
-    protocol/LocalUser.cpp
-        protocol/Pages.cpp
-        protocol/Pages.hpp
+        protocol/LocalUser.cpp
+    protocol/Pages.cpp
+    protocol/Pages.hpp
+    protocol/HTTPRoutes/PortalRoutes.cpp
+    protocol/HTTPRoutes/PortalRoutes.hpp
+    protocol/HTTPRoutes/ModuleRoutes.cpp
+    protocol/HTTPRoutes/ModuleRoutes.hpp
+    protocol/HTTPRoutes/PeerRoutes.cpp
+    protocol/HTTPRoutes/PeerRoutes.hpp
 )
 
 
@@ -41,12 +42,14 @@ target_include_directories(protocol_server PUBLIC protocol
     third_party/inja/single_include
     third_party/inih
     third_party/Mustache
+    third_party/drogon/lib/inc
 )
+
 target_link_libraries(protocol_server
-    Seastar::seastar
     SQLiteCpp
     sqlite3
     pthread
     dl
     crypto
+    drogon
 )

@@ -38,10 +38,10 @@ public:
     std::shared_ptr<Peer> get_peer(const std::string& domain);
 
     // TODO forward arguments to constructor
-    auto add_user(const LocalUser::AuthToken& token) -> auto {
-        RWMutex::LockForWrite lock{m_users_mtx};
-        return m_local_users.emplace(token.m_token, token);
-    }
-    std::shared_ptr<LocalUser> get_user_from_token(const std::string& token);
+//    auto add_user(const LocalUser::AuthToken& token) -> auto {
+//        RWMutex::LockForWrite lock{m_users_mtx};
+//        return m_local_users.emplace(token.m_token, token);
+//    }
+//    std::shared_ptr<LocalUser> get_user_from_token(const std::string& token);
 
 };

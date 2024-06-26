@@ -20,19 +20,19 @@
 <body>
     <div class="container">
         <h1>Sign in to {{domain}}</h1>
-        <form action="/login" method="post">
+        <form method="post">
             <div class="ms-form-group">
                 <label for="Username">Username</label>
-                <input type="email" id="Username" placeholder="Username" autocomplete="username" />
+                <input type="text" name="username" placeholder="Username" autocomplete="username" />
             </div>
             <div class="ms-form-group">
                 <label for="Password">Password</label>
-                <input type="password" id="Password" placeholder="Password" autocomplete="current-password" />
+                <input type="password" name="password" placeholder="Password" autocomplete="current-password" />
             </div>
-            <div class="ms-form-group">
-                <label for="chk-stay-logged-in">Stay Logged In</label>
-                <input type="checkbox" id="chk-stay-logged-in" />
-            </div>
+<!--            <div class="ms-form-group">-->
+<!--                <label for="chk-stay-logged-in">Stay Logged In</label>-->
+<!--                <input type="checkbox" name="stay-logged-in" />-->
+<!--            </div>-->
             <div><span id="invalid-reason">{{fail_reason}}</span></div>
             <br/>
             <div><button type="submit" id="btn-submit" class="ms-primary">Sign In</button></div>

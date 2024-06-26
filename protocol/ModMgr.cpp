@@ -9,7 +9,7 @@ void ModMgr::find_modules() {
     for (auto& p : std::filesystem::directory_iterator(apps_dir))
         if (p.is_directory()) {
             auto id = p.path().filename().string();
-            m_mods.emplace(id, new Mod(id));
+            m_mods.emplace(id, std::make_unique<Mod>(id));
         }
     DEBUG_LOG("Found " + std::to_string(m_mods.size()) + " apps");
 }
@@ -25,7 +25,7 @@ bool ModMgr::start_all() {
             continue;
         }
 
-        if (!mod->start_module()) {
+        if (!mod->start()) {
             LOG("Failed to start module " + id);
             ret = false;
         } else {

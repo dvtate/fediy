@@ -4,21 +4,15 @@
 [submodule "third_party/inih"]
 	path = third_party/inih
 	url = https://github.com/benhoyt/inih
-[submodule "third_party/mongoose"]
-	path = third_party/mongoose
-	url = https://github.com/cesanta/mongoose
 [submodule "third_party/SQLiteCpp"]
 	path = third_party/SQLiteCpp
 	url = git@github.com:SRombauts/SQLiteCpp.git
-[submodule "third_party/seastar"]
-	path = third_party/seastar
-	url = git@github.com:scylladb/seastar.git
 [submodule "third_party/inja"]
 	path = third_party/inja
 	url = https://github.com/pantor/inja
 [submodule "third_party/Mustache"]
 	path = third_party/Mustache
 	url = https://github.com/kainjow/Mustache
-[submodule "third_party/userver"]
-	path = third_party/userver
-	url = https://github.com/userver-framework/userver
+[submodule "third_party/drogon"]
+	path = third_party/drogon
+	url = https://github.com/drogonframework/drogon

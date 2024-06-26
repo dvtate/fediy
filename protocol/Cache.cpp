@@ -23,18 +23,18 @@ std::shared_ptr<Peer> Cache::get_peer(const std::string& domain) {
 /**
  * \returns null when invalid user token
  */
-std::shared_ptr<LocalUser> Cache::get_user_from_token(const std::string& token) {
-    m_users_mtx.read_lock();
-
-    auto it = m_local_users.find(token);
-    if (it != m_local_users.end()) {
-        m_users_mtx.read_unlock();
-        return it->second.m_user;
-    }
-
-    // Probably invalid token
-    return nullptr;
-}
+//std::shared_ptr<LocalUser> Cache::get_user_from_token(const std::string& token) {
+//    m_users_mtx.read_lock();
+//
+//    auto it = m_local_users.find(token);
+//    if (it != m_local_users.end()) {
+//        m_users_mtx.read_unlock();
+//        return it->second.m_user;
+//    }
+//
+//    // Probably invalid token
+//    return nullptr;
+//}
 
 void Cache::prune() {
     // Erase users with expired authentication

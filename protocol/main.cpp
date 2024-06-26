@@ -1,5 +1,5 @@
-#include "../third_party/seastar/include/seastar/core/reactor.hh"
-#include "../third_party/seastar/include/seastar/core/app-template.hh"
+
+#include "drogon/drogon.h"
 
 #include "App.hpp"
 
@@ -7,4 +7,16 @@
 App* g_app;
 
 int main(int argc, char** argv) {
+    // Start app services
+    g_app = new App();
+    g_app->start();
+
+
+
+    using namespace std::chrono_literals;
+    // All sessions are stored for 24 Hours
+    drogon::app()
+        .enableSession(24h)
+        .addListener("127.0.0.1", 8848)
+        .run();
 }

@@ -1,34 +1,30 @@
-#include "seastar/core/thread.hh"
-
 #include "App.hpp"
 
-#include "routes.hpp"
+#include "HTTPRoutes/PortalRoutes.hpp"
+#include "HTTPRoutes/ModuleRoutes.hpp"
+#include "HTTPRoutes/PeerRoutes.hpp"
 
-void App::run(int argc, char** argv) {
-    // Note: order is important here
+bool App::start() {
+    // Note: order is important
+
     if (m_config.m_error) {
         LOG_ERR("Failed to parse config file.");
-        return;
+        return false;
     }
 
     // Connect to datbase
-    m_db = std::make_unique<DB>(m_config.m_data_dir + "/db.db3");
+    m_db = std::make_unique<DB>();
 
     // Start modules
+    m_mods.find_modules();
     if (!m_mods.start_all()) {
         LOG_ERR("Failed to start modules.");
-        return;
+        return false;
     }
 
     m_pages = std::make_unique<Pages>();
 
-    m_app.run(argc, argv, [&] () {
-        return seastar::async([&]() {
-            auto server = std::make_unique<seastar::httpd::http_server_control>();
-            server->set_routes(add_server_routes).get();
-            server->listen((uint16_t) 8082).get();
+    PortalRoutes::initPathRouting();
 
-        });
-    });
-
+    return true;
 }

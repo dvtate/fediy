@@ -7,7 +7,7 @@ bool Config::parse(const std::string& path) {
     return m_error = ini_parse(
         path.c_str(),
         [](void* cfg, auto section, auto key, auto value){ 
-            return ((Config*) cfg)->set_key(section, key, value); 
+            return ((Config*) cfg)->set_key(section, key, value);
         },
         this
     );

@@ -48,7 +48,7 @@ public:
     std::string m_data_dir{"/opt/fediy/data"};
 
     /// Domain where we're hosting the the service
-    std::string m_hostname;
+    std::string m_hostname{"localhost"};
 
     /// Should clients+peers use SSL?
     bool m_ssl{true};

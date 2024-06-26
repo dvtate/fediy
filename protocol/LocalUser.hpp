@@ -9,9 +9,9 @@
 
 class LocalUser {
     std::string m_name;
-public:
     // TODO how do we handle updating users safely?
     std::string m_username;
+public:
     bool m_is_admin{false};
     std::string m_email;
     std::string m_locale; // TODO replace this with something better?
@@ -41,14 +41,32 @@ public:
         m_about(std::move(about))
     {}
 
-    void set_name(std::string name) {
+    const char* set_name(std::string name) {
+        if (name.size() > 128)
+            return "Name must be less than 128 characters";
         m_name = std::move(name);
+        return nullptr;
     }
     [[nodiscard]] const std::string& get_name() const {
         return m_name.empty() ? m_username : m_name;
     }
 
+    const char* set_username(std::string username) {
+        if (username.size() > 32)
+            return "Username must be less than 32 characters";
+        for (auto c: username)
+            if (!isalnum(c))
+                return "Username must have only alphanumeric characters";
+        m_username = std::move(username);
+    }
+
+    [[nodiscard]] const std::string& get_username() const {
+        return m_username;
+    }
+
     bool write_changes_to_db();
+
+//    static std::string login(const std::string& username, const std::string& password);
 
     class AuthToken {
     public:
@@ -58,6 +76,7 @@ public:
         std::shared_ptr<LocalUser> m_user;
         std::string m_token;
         time_t m_expiration;
+        // TODO maybe track sessionId too?
 
         static std::string get_token_string() {
             // Create random generator that picks indices charset
@@ -91,5 +110,4 @@ public:
         }
     };
 
-    static std::string login(const std::string& username, const std::string& password);
 };

@@ -1,4 +1,4 @@
-CREATE DATABASE fediy;
+--CREATE DATABASE fediy;
 
 CREATE TABLE Peers (
     domain       VARCHAR(64) PRIMARY KEY,
