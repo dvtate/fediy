@@ -8,10 +8,11 @@
 #include "Peer.hpp"
 #include "LocalUser.hpp"
 
+// TODO instead use one drogon framework templates
+
+
 class DB {
 public:
-    // TODO use connection pool for requests
-    //  https://www.sqlite.org/threadsafe.html
     SQLite::Database m_db;
 
 private:

@@ -1,1 +1,86 @@
 <!-- enter a code given by an admin -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Home</title>
+    <meta name="description" content="Your home for federated apps" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/minstyle.io@2.0.2/dist/css/minstyle.io.min.css" />
+
+    <style>
+        /* div {
+            border: 1px solid green;
+        } */
+        #invalid-reason {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Sign Up</h1>
+    <form method="post">
+        <div class="ms-form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" placeholder="Username" autocomplete="username" onkeyup="checkForm()" />
+        </div>
+        <div class="ms-form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" placeholder="Password" autocomplete="current-password" onkeyup="checkForm()" />
+        </div>
+        <div class="ms-form-group">
+            <label for="password2">Confirm Password</label>
+            <input type="password" name="password2" id="password2" placeholder="Password" autocomplete="current-password" onkeyup="checkForm()" />
+        </div>
+        <div class="ms-form-group">
+            <label for="contact">Contact email</label>
+            <input type="email" name="contact" id="contact" placeholder="email@example.com" autocomplete="email" onkeyup="checkForm()" />
+        </div>
+
+        <div><span id="invalid-reason">{{fail_reason}}</span></div>
+        <br/>
+        <div><button type="submit" id="btn-submit" class="ms-primary">Sign In</button></div>
+    </form>
+</div>
+<script>
+    function checkForm() {
+        // Check username
+        const username = document.getElementById('username');
+        const badReason = document.getElementById('invalid-reason');
+        const submitBtn = document.getElementById('btn-submit');
+        if (username.value.match(/[^A-Za-z0-9_]/g)) {
+            badReason.innerHTML = "Username should only contain alphanumeric characters";
+            submitBtn.disabled = true;
+            return;
+        }
+        if (username.value.length > 32) {
+            badReason.innerHTML = "Username must be less than 32 characters long";
+            submitBtn.disabled = true;
+            return;
+        }
+
+        // Check passwords
+        const password = document.getElementById('password');
+        const password2 = document.getElementById('password2');
+        if (password.value !== password2.value && password2.value.length !== 0) {
+            badReason.innerHTML = "Passwords do not match";
+            submitBtn.disabled = true;
+            return;
+        }
+
+        // Check contact email
+        const contact = document.getElementById('contact');
+        if (contact.value.length > 250) {
+            badReason.innerHTML = "Contact email must be less than 250 characters long";
+            submitBtn.disabled = true;
+            return;
+        }
+
+        badReason.innerHTML = '';
+        submitBtn.disabled = false;
+    }
+</script>
+</body>
+</html>

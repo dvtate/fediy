@@ -48,11 +48,11 @@ std::string Pages::signup_page(const std::string& fail_reason) {
 }
 
 
-std::string Pages::portal_apps(LocalUser& user) {
+std::string Pages::portal_apps(const LocalUser& user) {
     g_app->m_mods;
     user.m_is_admin;
     return m_portal_apps_template.render({});
 }
-std::string Pages::portal_settings(LocalUser& user) {
+std::string Pages::portal_settings(const LocalUser& user) {
     return m_portal_settings_template.render({});
 }
