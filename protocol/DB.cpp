@@ -41,8 +41,10 @@ std::shared_ptr<LocalUser> DB::get_user(const std::string& username, std::string
     // TODO should hash password while waiting for DB response
 
     // Hash provided password
-    unsigned char hashed_password[129];
+    unsigned char hashed_password[SHA512_DIGEST_LENGTH];
     password += g_app->m_config.m_salt;
+
+    // TODO eventually switch to argon2 or something better
     unsigned char* hp = SHA512((unsigned char*) password.c_str(), password.size(), hashed_password);
 
     // Thread safety
@@ -54,25 +56,27 @@ std::shared_ptr<LocalUser> DB::get_user(const std::string& username, std::string
         return nullptr;
 
     // Verify that password is correct
-    const auto pw_col = m_get_user_query.getColumn(2);
-    if (pw_col.getBytes() < 128) {
-        LOG_ERR("DB: hashedPassword column shorter than expected");
+    const auto pw_col = m_get_user_query.getColumn(3);
+    if (pw_col.getBytes() < SHA512_DIGEST_LENGTH) {
+        LOG_ERR("DB: hashedPassword column shorter than expected???: " <<pw_col.getBytes());
         return nullptr;
     }
     auto db_hp = (unsigned char*) pw_col.getBlob();
-    for (int i = 0; i < 128; i++)
-        if (hp[i] != db_hp[i])
+    for (int i = 0; i < SHA512_DIGEST_LENGTH; i++)
+        if (hp[i] != db_hp[i]) {
+            DEBUG_LOG(i << ":  '" << hp[i] << "' != '" << db_hp[i] << "'")
             return nullptr; // wrong pw
+        }
 
     // Make user object
     return std::make_shared<LocalUser>(
-        m_get_user_query.getColumn(1).getString(),  // name
+        m_get_user_query.getColumn(2).getString(),  // name
         username,
-        m_get_user_query.getColumn(0).getInt() != 0, // isAdmin
-        m_get_user_query.getColumn(3).getString(),  // email
-        m_get_user_query.getColumn(4).getString(),  // locale
-        m_get_user_query.getColumn(5).getUInt(),  // join_ts
-        m_get_user_query.getColumn(6).getString()   // about
+        m_get_user_query.getColumn(1).getInt() != 0, // isAdmin
+        m_get_user_query.getColumn(4).getString(),  // email
+        m_get_user_query.getColumn(5).getString(),  // locale
+        m_get_user_query.getColumn(6).getUInt(),  // join_ts
+        m_get_user_query.getColumn(7).getString()   // about
     );
 }
 
@@ -97,7 +101,7 @@ std::shared_ptr<LocalUser> DB::get_user(const std::string& username) {
 
 bool DB::add_user(const LocalUser& user, std::string password) {
     // Hash provided password
-    unsigned char hashed_password[129];
+    unsigned char hashed_password[SHA512_DIGEST_LENGTH];
     password += g_app->m_config.m_salt;
     unsigned char* hp = SHA512((unsigned char*) password.c_str(), password.size(), hashed_password);
 

@@ -20,7 +20,7 @@ CREATE TABLE Users (
     about          TEXT DEFAULT ""
 );
 
-CREATE TABLE UserTokens (
-    token    VARCHAR(32) PRIMARY KEY,
-    username VARCHAR(32) REFERENCES Users
-);
+-- CREATE TABLE UserTokens (
+--     token    VARCHAR(32) PRIMARY KEY,
+--     username VARCHAR(32) REFERENCES Users
+-- );
