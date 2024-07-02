@@ -1,6 +1,6 @@
 
 ///////
-// This should go in shared header
+/// This should go in shared header
 ///////
 
 struct fiy_request_t {

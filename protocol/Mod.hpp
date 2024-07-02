@@ -1,44 +1,51 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
+
+#include "globals.hpp"
 
 // TODO abstract base with child classes for each method of sending requests to the modules
 
+class ModMgr;
+
 class Mod {
-protected:
-    void* m_handle{nullptr};
+public:
+    std::mutex m_mtx;
+
 
 public:
+    // Metadata
     std::string m_id;
     std::string m_name;
     std::string m_version;
     std::string m_description;
+    std::filesystem::file_time_type m_install_ts;
 
+    // Runtime data
+    bool m_loaded{true};
+    bool m_enabled;
+    bool m_running{false};
     std::string m_error;
 
+    // IPC interface
+    enum class IPCType {
+        SHARED_LIBRARY,     // .so file
+        UNIX_SOCKET,        // unix socket connection
+        NETWORK             // tcp connection
+    } m_ipc;
+    std::string m_ipc_uri;
+    void* m_dl_handle;
 
-    explicit Mod(std::string id): m_id(std::move(id)) {}
-    virtual ~Mod() = default;
+    Mod() = default;
+    ~Mod();
 
-    // Load module settings in metadata from fs
-    bool load_conf();
-
-//    virtual bool start() = 0;
-//    virtual bool stop() = 0;
     bool start();
     bool stop();
 
-//    static std::unique_ptr<Mod> from_id(std::string id) {
-//        return nullptr;
-//    }
-};
+    bool set_enabled(); // update mod metadata
 
-//class SharedObjectMod : public Mod {
-//protected:
-//    void* m_handle{nullptr};
-//
-//public:
-//    virtual bool start() override;
-//    virtual bool stop() override;
-//};
-//
+    static std::unique_ptr<Mod> load(const std::string& id, std::string& fail_reason);
+
+    friend class ModMgr;
+};

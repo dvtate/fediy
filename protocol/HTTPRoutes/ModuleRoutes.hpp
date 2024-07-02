@@ -6,5 +6,6 @@
 
 
 class ModuleRoutes {
+public:
 
 };

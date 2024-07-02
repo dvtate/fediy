@@ -5,7 +5,11 @@
 #include "Mod.hpp"
 
 class ModMgr {
+protected:
     std::map<std::string, std::unique_ptr<Mod>> m_mods;
+    std::mutex m_mtx;
+    std::vector<Mod*> m_mods_list_cache;
+    bool m_mods_list_cache_valid{false};
 
 public:
 
@@ -22,15 +26,29 @@ public:
         return not_found;
     }
 
-    std::vector<Mod*> get_mods() {
-        std::vector<Mod*> ret;
-        ret.reserve(m_mods.size());
+    const std::vector<Mod*>& get_mods() {
+        // Using shared, cached result
+        if (m_mods_list_cache_valid)
+            return m_mods_list_cache;
+
+        // Wait for earlier thread to finish
+        if (!m_mtx.try_lock()) {
+            m_mtx.lock();
+            m_mtx.unlock();
+            return m_mods_list_cache;
+        }
+        m_mods_list_cache.clear();
+        m_mods_list_cache.reserve(m_mods.size());
         for (auto& [id, mod]: m_mods)
-            ret.emplace_back(&*mod);
-        return ret;
+            m_mods_list_cache.emplace_back(&*mod);
+        m_mods_list_cache_valid = true;
+        m_mtx.unlock();
+        return m_mods_list_cache;
     }
 
     bool remove_mod(const std::string& id) {
+        std::lock_guard lock(m_mtx);
+        m_mods_list_cache_valid = false;
         auto m = std::move(get_mod(id));
         if (m == nullptr)
             return false;
