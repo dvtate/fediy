@@ -24,6 +24,10 @@ add_executable(protocol_server ${protocol_server_sources}
     protocol/HTTPRoutes/ModuleRoutes.hpp
     protocol/HTTPRoutes/PeerRoutes.cpp
     protocol/HTTPRoutes/PeerRoutes.hpp
+        modlib/fediymod.h
+        modlib/mod.cpp
+        protocol/ModIPC.cpp
+        protocol/ModIPC.hpp
 )
 
 

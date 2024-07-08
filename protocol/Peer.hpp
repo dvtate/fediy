@@ -8,10 +8,10 @@
 
 class PeerAuth {
 public:
-    /// AES token for sending encrypted data
-    std::string m_aes_key; // TODO mem protect, securely delete, etc.
+    /// Symmetric key
+    std::string m_sym_key; // TODO make this secure!
 
-    /// GPG public key
+    /// Public key
     std::string m_pubkey;
 
     /// Bearer token for authenticating endpoints
@@ -51,7 +51,7 @@ public:
         std::string our_generated_token = get_token_string(),
         const time_t expire_ts = std::time(nullptr) + SESSION_LIFETIME
     ):
-        m_aes_key(std::move(sym_key)),
+        m_sym_key(std::move(sym_key)),
         m_pubkey(std::move(pubkey)),
         m_bearer_token_we_send(std::move(peer_provided_token)),
         m_bearer_token_we_accept(std::move(our_generated_token)),

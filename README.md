@@ -11,11 +11,13 @@
 - Chat-IY: Matrix competitor
   - text, vc, teams, etc.
 - Social-IY: Mastodon competitor
+- Contacts: Rolodex
 - Wiki-IY: mediawiki killer
 - Edit-IY: Google docs killer
 - Vid-IY: peertube competitor (integrate with grayjay)
 - Calendar-IY: Google Calendar killer
 - Cloud-IY: Nextcloud competitor
+
 
 
 Git FS manager:
@@ -52,22 +54,6 @@ MVP:
 - hosted repos
 - limited/no gui
 
-
-
-# Peer Authentication:
-## Process
-- get peer's public key from endpoint
-	- /auth/pub -> peer.key
-- encrypted with peer.key, we send our public key, domain, and token to peer ; request signed with our pubkey
-	- /auth/connect -> auth token, symmetric key
-	- peer checks that provided public key corresponds with our /auth/pub key
-	- peer sends back encrypted token along with symmetric key
-- 
-
-- peer gets public certificate from server
-- peer sends request to get signed token from peer
-	- peer can reject this request
-- 
 
 
 # Data Directory

@@ -1,70 +1,58 @@
+#include <string.h>
+#include <stdlib.h>
 
-///////
-/// This should go in shared header
-///////
-
-struct fiy_request_t {
-    const char* path;
-    const char* body;         // null = get request
-    const char* domain;       // null = local
-    const char* user;         // null = unauthenticated
-    const char* headers;      // is this even needed?
-};
-
-struct fiy_response_t {
-    char* headers;          // updated headers
-    int status;             //
-    char* body;             //
-};
-
-//
-struct fiy_host_info_t {
-    const char* domain;     // this is where the
-    const char* module_dir;  // this is where the module's files should go
-};
-
-/// This is used to provide callbacks to the host app
-struct fiy_mod_info_t {
-    /// username changed
-    // if domain is null, then user is local
-    void (*username_change_handler)(const char* domain, const char* old_username, const char* new_username);
-
-    /// peer domain changed
-    void (*peer_domain_change_handler)(const char* old_domain, const char* new_domain);
-
-    /// Handle http requests to the module
-    // TODO this typedef will probably change
-    void (*request_handler)(const struct fiy_request_t* request);
-};
-
-#ifdef __cplusplus
-namespace fediy {
-    typedef struct fiy_request_t Request;
-    typedef struct fiy_host_info_t HostInfo;
-    typedef struct fiy_mod_info_t ModInfo;
-};
-#endif
+#include "fediymod.h"
 
 //////////////////////////
 // Exports
 ////////////////////////
 
-void f(int a, const char* c);
+static void handle_request(const struct fiy_request_t* request, fiy_callback_t callback) {
+    // Allocate a body string to send to the user
+    size_t body_len = 50
+        + strlen(request->user)
+        + strlen(request->domain)
+        + strlen(request->path);
+    char* body = (char*) malloc(sizeof(char) * body_len);
+    snprintf(
+        body,
+        body_len,
+        "Hello, @%s@%s! <br/>Path: %s",
+        request->user,
+        request->domain,
+        request->path
+    );
 
-static void handle_request(const struct fiy_request_t* request) {
-    /// business logic and frontend hosting
+    struct fiy_response_t resp = {
+            .status=200,
+            .headers=NULL,
+            .body=body
+    };
+    callback(&resp);
+
+    // Cleanup
+    free(body);
 }
 
 static void update_peer_domain(const char* old_domain, const char* new_domain) {
 
 }
+
 static void update_username(const char* domain, const char* old_username, const char* new_username) {}
+
 static struct fiy_mod_info_t mod_info = {
     .request_handler=handle_request,
     .peer_domain_change_handler=update_peer_domain,
     .username_change_handler=update_username
 };
-struct fiy_mod_info_t* start(const struct fiy_host_info_t* host_info) {
+
+/**
+ * Initialize the module so that it can begin accepting requests
+ * @param domain
+ * @param module_dir
+ * @return
+ */
+struct fiy_mod_info_t* start(const char* domain, const char* module_dir) {
     // prepare and make sure everything is set up and installed correctly
     return &mod_info;
 }

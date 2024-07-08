@@ -12,10 +12,7 @@ void ModMgr::find_modules() {
     for (auto& p : std::filesystem::directory_iterator(apps_dir))
         if (p.is_directory()) {
             auto id = p.path().filename().string();
-            auto m = Mod::load(id, fail_reason);
-            if (m != nullptr) {
-                m_mods.emplace(id, std::move(m));
-            }
+            m_mods.emplace(id, std::make_unique<Mod>(id));
         }
     DEBUG_LOG("Found " + std::to_string(m_mods.size()) + " apps");
 }

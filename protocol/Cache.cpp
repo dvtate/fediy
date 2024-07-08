@@ -53,10 +53,6 @@ void Cache::prune() {
 //        m_users_mtx.read_unlock();
 //    }
     const auto now = std::time(nullptr);
-    std::erase_if(m_local_users, [now](const auto& item) {
-        const auto& [token_str, tok] = item;
-        return tok.is_expired(now);
-    });
     std::erase_if(m_peers, [](const auto& item) {
         const auto& [domain, peer] = item;
         return peer->m_auth.is_expired();

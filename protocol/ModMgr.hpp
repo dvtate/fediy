@@ -9,7 +9,7 @@ protected:
     std::map<std::string, std::unique_ptr<Mod>> m_mods;
     std::mutex m_mtx;
     std::vector<Mod*> m_mods_list_cache;
-    bool m_mods_list_cache_valid{false};
+    volatile bool m_mods_list_cache_valid{false};
 
 public:
 
@@ -31,12 +31,11 @@ public:
         if (m_mods_list_cache_valid)
             return m_mods_list_cache;
 
-        // Wait for earlier thread to finish
-        if (!m_mtx.try_lock()) {
-            m_mtx.lock();
-            m_mtx.unlock();
+        // Check if another thread already finished it
+        m_mtx.lock();
+        if (m_mods_list_cache_valid)
             return m_mods_list_cache;
-        }
+
         m_mods_list_cache.clear();
         m_mods_list_cache.reserve(m_mods.size());
         for (auto& [id, mod]: m_mods)
@@ -54,5 +53,15 @@ public:
             return false;
         m_mods.erase(id);
         return m->stop();
+    }
+
+    bool update_id(const std::string& old_id, const std::string& new_id) {
+        std::lock_guard lock(m_mtx);
+        if (m_mods.contains(new_id))
+            return false;
+        m_mods[new_id] = std::move(m_mods[old_id]);
+        m_mods.erase(old_id);
+        m_mods[new_id]->set_id(new_id);
+        return true;
     }
 };

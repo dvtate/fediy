@@ -3,49 +3,119 @@
 #include <string>
 #include <filesystem>
 
+#include "drogon/HttpController.h"
+
 #include "globals.hpp"
+
+#include "ModIPC.hpp"
 
 // TODO abstract base with child classes for each method of sending requests to the modules
 
 class ModMgr;
 
 class Mod {
-public:
-    std::mutex m_mtx;
-
-
-public:
-    // Metadata
-    std::string m_id;
-    std::string m_name;
-    std::string m_version;
-    std::string m_description;
-    std::filesystem::file_time_type m_install_ts;
+protected:
+    std::mutex m_mtx; // for operations on the module config
 
     // Runtime data
     bool m_loaded{true};
-    bool m_enabled;
+    bool m_enabled{false};
     bool m_running{false};
     std::string m_error;
+public:
 
-    // IPC interface
-    enum class IPCType {
-        SHARED_LIBRARY,     // .so file
-        UNIX_SOCKET,        // unix socket connection
-        NETWORK             // tcp connection
-    } m_ipc;
-    std::string m_ipc_uri;
-    void* m_dl_handle;
+    // overengineering
+    struct Version {
+        mutable long major{-1}, minor{-1};
+        mutable std::string major_string;
+
+        Version() = default;
+
+        explicit Version(const std::string& version_str) {
+            std::size_t pos;
+            major = std::stoi(version_str, &pos);
+            if (pos >= version_str.size() || version_str.at(pos) != '.') {
+                minor = 0;
+                return;
+            }
+            char* end = nullptr;
+            minor = std::strtol(version_str.c_str() + pos, &end, 10);
+            major_string = std::to_string(major);
+        }
+
+        Version(long major, long minor):
+                major(major), minor(minor)
+        {
+            major_string = std::to_string(major);
+        }
+
+        [[nodiscard]] bool compatible(const Version& other) const {
+            return major == other.major;
+        }
+        [[nodiscard]] bool compatible(const std::string& other_major_str) const {
+            return major_string == other_major_str;
+        }
+
+        [[nodiscard]] auto operator<=>(const Version& other) const {
+            if (auto c = major <=> other.major; c != 0)
+                return c;
+            return minor <=> other.minor;
+        }
+        [[nodiscard]] std::string str() const {
+            return major_string + '.' + std::to_string(minor);
+        }
+    };
+
+    // Metadata
+    std::string m_id;
+    std::string m_name;
+    std::string m_description;
+    std::string m_icon;
+    std::filesystem::file_time_type m_install_ts;
+    Version m_version;
+
+    // Communicate with mod
+    std::unique_ptr<ModIPC> m_ipc{nullptr};
 
     Mod() = default;
+    explicit Mod(std::string id);
     ~Mod();
 
     bool start();
     bool stop();
 
-    bool set_enabled(); // update mod metadata
+    void set_enabled(bool enabled);
+    void set_id(const std::string& id);
 
-    static std::unique_ptr<Mod> load(const std::string& id, std::string& fail_reason);
+    enum class Status {
+        INVALID,    // failed to read module
+        DISABLED,   // module installed but not enabled
+        ENABLED,    // module enabled but not started
+        RUNNING,    // module running
+        FAILED,     // module failed while running
+    };
+
+    [[nodiscard]] Status status() const {
+        if (!m_loaded)
+            return Status::INVALID;
+        if (!m_enabled)
+            return Status::DISABLED;
+        if (m_running)
+            return Status::RUNNING;
+        if (m_error.empty())
+            return Status::ENABLED;
+        return Status::FAILED;
+    }
+
+    std::string json();
+    std::string user_json();
+    void save();
+
+    [[nodiscard]] inline std::filesystem::path appdir() const;
+
+//    bool action(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback) {
+//
+//    }
 
     friend class ModMgr;
 };
