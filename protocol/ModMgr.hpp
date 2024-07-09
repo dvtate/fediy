@@ -49,6 +49,7 @@ public:
         std::lock_guard lock(m_mtx);
         m_mods_list_cache_valid = false;
         auto m = std::move(get_mod(id));
+        m->m_mtx.lock();
         if (m == nullptr)
             return false;
         m_mods.erase(id);
@@ -61,7 +62,9 @@ public:
             return false;
         m_mods[new_id] = std::move(m_mods[old_id]);
         m_mods.erase(old_id);
+        m_mods[new_id]->stop();
         m_mods[new_id]->set_id(new_id);
+        m_mods[new_id]->start();
         return true;
     }
 };

@@ -28,7 +28,7 @@ static void handle_request(const struct fiy_request_t* request, fiy_callback_t c
             .headers=NULL,
             .body=body
     };
-    callback(&resp);
+    callback(request, &resp);
 
     // Cleanup
     free(body);
@@ -40,20 +40,19 @@ static void update_peer_domain(const char* old_domain, const char* new_domain) {
 
 static void update_username(const char* domain, const char* old_username, const char* new_username) {}
 
-static struct fiy_mod_info_t mod_info = {
-    .request_handler=handle_request,
-    .peer_domain_change_handler=update_peer_domain,
-    .username_change_handler=update_username
-};
-
 /**
  * Initialize the module so that it can begin accepting requests
  * @param domain
  * @param module_dir
  * @return
  */
-struct fiy_mod_info_t* start(const char* domain, const char* module_dir) {
-    // prepare and make sure everything is set up and installed correctly
+struct fiy_mod_info_t* start(const struct fiy_host_info_t* host_info) {
+    // Prepare and make sure everything is set up and installed correctly
+    static struct fiy_mod_info_t mod_info = {
+            .on_request=handle_request,
+            .on_peer_domain_changed=update_peer_domain,
+            .on_username_changed=update_username
+    };
     return &mod_info;
 }
 

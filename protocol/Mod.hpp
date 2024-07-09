@@ -111,7 +111,7 @@ public:
     std::string user_json();
     void save();
 
-    [[nodiscard]] inline std::filesystem::path appdir() const;
+    inline std::filesystem::path appdir() const;
 
 //    bool action(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback) {
 //

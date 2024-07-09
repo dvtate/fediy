@@ -11,12 +11,10 @@ int main(int argc, char** argv) {
     g_app = new App();
     g_app->start();
 
-
-
     using namespace std::chrono_literals;
-    // All sessions are stored for 24 Hours
+    // All sessions are stored for 48 Hours
     drogon::app()
-        .enableSession(0)
+        .enableSession(48h)
         .addListener("127.0.0.1", 8848)
         .run();
 }

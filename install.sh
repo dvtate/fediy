@@ -13,5 +13,3 @@ touch /opt/fediy/config.ini
 
 cat protocol/db.sql | sqlite3 /opt/fediy/data/db.db3
 
-
-# To uninstall

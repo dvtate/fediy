@@ -35,23 +35,30 @@ struct fiy_response_t {
 #endif
 };
 
-typedef void (* fiy_callback_t)(const struct fiy_response_t*);
+typedef void (* fiy_callback_t)(const struct fiy_request_t* request, const struct fiy_response_t*);
 
 /// This is used to provide callbacks to the host app
 struct fiy_mod_info_t {
-    /// username changed
-    // if domain is null, then user is local
-    void (* username_change_handler)(const char* domain, const char* old_username, const char* new_username);
+    /// Handle http requests to the module
+    void (*on_request)(const struct fiy_request_t* request, fiy_callback_t callback);
 
     /// peer domain changed
-    void (* peer_domain_change_handler)(const char* old_domain, const char* new_domain);
+    void (*on_peer_domain_changed)(const char* old_domain, const char* new_domain);
 
-    /// Handle http requests to the module
-    // TODO this typedef will probably change
-    void (* request_handler)(const struct fiy_request_t* request, fiy_callback_t callback);
+    /// username changed
+    // if domain is null, then user is local
+    void (*on_username_changed)(const char* domain, const char* old_username, const char* new_username);
 };
 
+struct fiy_host_info_t {
+    const char* base_uri; // <protocol>://<host>/<appid> ie - https://bodge.dev/git
+    void (*log)(int level, const char* message);
+};
+
+typedef struct fiy_mod_info_t* (*fiy_mod_start_function_t)(const struct fiy_host_info_t*);
+
 #ifdef __cplusplus
+    struct ModInfo : public fiy_mod_info_t {};
 //    struct Request : public fiy_request_t {};
 //    struct HostInfo : public fiy_host_info_t {};
 //    struct Response : public fiy_response_t {

@@ -135,10 +135,12 @@ Mod::~Mod() {
 }
 
 bool Mod::start() {
+    std::lock_guard lock(m_mtx);
     return m_running = m_ipc->start();
 }
 
 bool Mod::stop() {
+    std::lock_guard lock(m_mtx);
     m_running = false;
     return m_ipc->stop();
 }
@@ -195,4 +197,5 @@ void Mod::set_id(const std::string& id) {
     auto old_appdir = appdir();
     m_id = id;
     std::filesystem::rename(old_appdir, appdir());
+    save();
 }
