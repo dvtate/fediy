@@ -91,7 +91,7 @@ Mod::Mod(std::string id) {
         } else if (ts == "shared_object") {
             if (ipc_uri.empty())
                 ipc_uri = mp / "module.so";
-            m_ipc = std::make_unique<ModDLLIPC>(ipc_uri);
+            m_ipc = std::make_unique<ModDLLIPC>(this, ipc_uri);
         } else if (ts == "socket") {
             if (ipc_uri.empty())
                 ipc_uri = mp / "ipc.socket";

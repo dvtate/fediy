@@ -2,7 +2,7 @@
 
 ## Big Features
 - Sever app management
-- SSO
+- Single Sign On (SSO)
 - Collaboration (ie - git)
 
 ## App Ideas
@@ -17,6 +17,7 @@
 - Vid-IY: peertube competitor (integrate with grayjay)
 - Calendar-IY: Google Calendar killer
 - Cloud-IY: Nextcloud competitor
+
 
 
 

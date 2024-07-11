@@ -1,4 +1,6 @@
 # TODO
+- make nginx module instead of drogon
+  - https://github.com/vision5/ngx_devel_kit?tab=readme-ov-file#usage-for-users
 - use drogon db wrapper
 - demo mod
   - library
