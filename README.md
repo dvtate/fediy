@@ -1,12 +1,13 @@
 # Federated Git
 
-## Big Features
-- Sever app management
-- Single Sign On (SSO)
+## Big Features/Selling points
+- Data ownership
 - Collaboration (ie - git)
+- Single Sign On (SSO)
+- Sever app management
 
 ## App Ideas
-- Git-IY: GitLab killer 
+- Git-IY: GitLab killer
 - Blog-IY: Wordpress killer
 - Chat-IY: Matrix competitor
   - text, vc, teams, etc.
@@ -17,35 +18,17 @@
 - Vid-IY: peertube competitor (integrate with grayjay)
 - Calendar-IY: Google Calendar killer
 - Cloud-IY: Nextcloud competitor
+- Kanban-IY: jira/trello/etc. killer
 
-
-
-
-Git FS manager:
-- handles local copies of git repos
-- secure communications with the other instances
-	- clone repos from other instances
-	- 
-
-Interinstance manager:
-- establishes connections between instances
-- created auth credentials
-
-
-Endpoints:
-- Auth:
-	- SSL/Key?
-- Frontend: For repos:
-	- For local users, this will be generated from local repo, for remote users this will come from
-	- summary: files list
-	- 
-	- files summary 
 
 
 Architecture?:
-- Platform: manage apps (add, remove, change settings), users, federation, etc.
-- Library: utils for interacting with other apps on the platform
-- Apps: link with libray to gain access to authentication and stuff
+- Platform/protocl:
+  - manage apps (add, remove, change settings), users
+  - acts as a middleman between apps that handles authentication
+  - communicates with the servers
+- Library: utils for building and interacting with apps on the platform
+- Apps: use library to handle fediverse to gain access to authentication and stuff
 	- Apps are run and stopped by the platform
 
 

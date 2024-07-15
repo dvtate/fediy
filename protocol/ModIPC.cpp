@@ -7,6 +7,12 @@
 #include "LocalUser.hpp"
 #include "App.hpp"
 
+static char* new_cstr_from_string(const std::string_view& s) {
+    char* ret = new char[s.size() + 1];
+    strncpy(ret, s.data(), s.size());
+    return ret;
+}
+
 ModDllIpcRequest::ModDllIpcRequest(
         const drogon::HttpRequestPtr& req,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback

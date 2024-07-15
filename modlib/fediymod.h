@@ -16,11 +16,12 @@ namespace fediy {
 #endif
 
 struct fiy_request_t {
+    const char* method;     // http method
     const char* path;
-    const char* body;         // null = get request
-    const char* domain;       // null = local
-    const char* user;         // null = unauthenticated
-    const char* headers;      // is this even needed?
+    const char* domain;     // null = local
+    const char* user;       // null = unauthenticated
+    const char* headers;
+    const char* body;       // null = get request
 };
 
 struct fiy_response_t {
@@ -39,6 +40,8 @@ typedef void (* fiy_callback_t)(const struct fiy_request_t* request, const struc
 
 /// This is used to provide callbacks to the host app
 struct fiy_mod_info_t {
+    const char* remote_app_id;
+
     /// Handle http requests to the module
     void (*on_request)(const struct fiy_request_t* request, fiy_callback_t callback);
 
@@ -50,9 +53,31 @@ struct fiy_mod_info_t {
     void (*on_username_changed)(const char* domain, const char* old_username, const char* new_username);
 };
 
+// maybe this gets passed to library via host_info_t
+/**
+ * Send a request
+ * @param app_id app to send the request to
+ * @param request request to send to the other app
+ *      method   - http method
+ *      path     - uri path
+ *      domain   - remote server to send request to or nullptr if local inter-app request
+ *      user     - local user or nullptr if unauthenticated
+ * @param callback
+ * @notes
+ * - local apps can send requests to each other without restrictions
+ * - an app on server a can only send requests to apps on server b on behalf of users residing on server a
+ *    - this prevents false impersonation
+ */
+typedef void (*fiy_send_request_t)(
+    const char* app_id,
+    const fiy_request_t* request,
+    void (*callback)(const fiy_response_t*)
+);
+
 struct fiy_host_info_t {
     const char* base_uri; // <protocol>://<host>/<appid> ie - https://bodge.dev/git
     void (*log)(int level, const char* message);
+    fiy_send_request_t request;
 };
 
 typedef struct fiy_mod_info_t* (*fiy_mod_start_function_t)(const struct fiy_host_info_t*);
@@ -86,5 +111,6 @@ typedef struct fiy_mod_info_t* (*fiy_mod_start_function_t)(const struct fiy_host
 #ifdef __cplusplus
 } // namespace fediy
 #endif
+
 
 #endif //FEDIY_FEDIYMOD_H

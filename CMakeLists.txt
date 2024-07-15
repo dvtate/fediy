@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(fediy)
+project(fediy
+        LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -8,6 +9,10 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/SQLiteCpp)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/drogon)
 
 file(GLOB protocol_server_sources protocol/*.cpp)
+
+add_library(demo_mod SHARED
+        modlib/example_mod.c)
+
 add_executable(protocol_server ${protocol_server_sources}
     third_party/inih/ini.c
     protocol/ProtocolActions.hpp
@@ -15,7 +20,7 @@ add_executable(protocol_server ${protocol_server_sources}
     protocol/Mod.hpp
     protocol/ModMgr.cpp
     protocol/ModMgr.hpp
-        protocol/LocalUser.cpp
+    protocol/LocalUser.cpp
     protocol/Pages.cpp
     protocol/Pages.hpp
     protocol/HTTPRoutes/PortalRoutes.cpp
@@ -24,12 +29,10 @@ add_executable(protocol_server ${protocol_server_sources}
     protocol/HTTPRoutes/ModuleRoutes.hpp
     protocol/HTTPRoutes/PeerRoutes.cpp
     protocol/HTTPRoutes/PeerRoutes.hpp
-        modlib/fediymod.h
-        modlib/mod.cpp
-        protocol/ModIPC.cpp
-        protocol/ModIPC.hpp
+    modlib/fediymod.h
+    protocol/ModIPC.cpp
+    protocol/ModIPC.hpp
 )
-
 
 # Debug/vs release
 target_compile_definitions(protocol_server PRIVATE

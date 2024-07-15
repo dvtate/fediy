@@ -1,4 +1,4 @@
-#include "Cache.hpp"
+#include "Peers.hpp"
 
 #include "App.hpp"
 
@@ -6,37 +6,25 @@
 /**
  * \returns null when not a peer invalid user token
  */
-std::shared_ptr<Peer> Cache::get_peer(const std::string& domain) {
-    m_peers_mtx.read_lock();
+std::shared_ptr<Peer> Peers::get_peer_for_domain(const std::string& domain) {
+    RWMutex::LockForRead lock{m_mtx};
 
-    auto it = m_peers.find(domain);
-
-    if (it != m_peers.end()) {
-        m_peers_mtx.read_unlock();
+    auto it = m_peers_out.find(domain);
+    if (it != m_peers_out.end())
         return it->second;
-    }
-    m_peers_mtx.read_unlock();
-//    return g_app->add_peer(domain);
     return nullptr;
 }
 
-/**
- * \returns null when invalid user token
- */
-//std::shared_ptr<LocalUser> Cache::get_user_from_token(const std::string& token) {
-//    m_users_mtx.read_lock();
-//
-//    auto it = m_local_users.find(token);
-//    if (it != m_local_users.end()) {
-//        m_users_mtx.read_unlock();
-//        return it->second.m_user;
-//    }
-//
-//    // Probably invalid token
-//    return nullptr;
-//}
+std::shared_ptr<Peer> Peers::get_peer_from_token(const std::string& domain) {
+    RWMutex::LockForRead lock{m_mtx};
 
-void Cache::prune() {
+    auto it = m_peers_out.find(domain);
+    if (it != m_peers_out.end())
+        return it->second;
+    return nullptr;
+}
+
+void Peers::prune() {
     // Erase users with expired authentication
 //    m_users_mtx.read_lock();
 //    auto it_tok_end = m_user_tokens.begin();
@@ -53,8 +41,12 @@ void Cache::prune() {
 //        m_users_mtx.read_unlock();
 //    }
     const auto now = std::time(nullptr);
-    std::erase_if(m_peers, [](const auto& item) {
+    std::erase_if(m_peers_in, [this](const auto& item) {
         const auto& [domain, peer] = item;
-        return peer->m_auth.is_expired();
+        if (peer->m_auth.is_expired()) {
+            m_peers_out.erase(peer->m_domain);
+            return true;
+        }
+        return false;
     });
 }

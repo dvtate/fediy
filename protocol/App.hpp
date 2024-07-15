@@ -2,7 +2,7 @@
 
 #include "globals.hpp"
 
-#include "Cache.hpp"
+#include "Peers.hpp"
 #include "DB.hpp"
 #include "Config.hpp"
 #include "ModMgr.hpp"
@@ -12,7 +12,7 @@ class App {
 
 public:
     AppConfig m_config;
-    Cache m_cache;
+    Peers m_cache;
     std::unique_ptr<DB> m_db;
     ModMgr m_mods;
     std::unique_ptr<Pages> m_pages;

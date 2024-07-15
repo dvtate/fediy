@@ -9,10 +9,13 @@
 #include <dlfcn.h>
 
 #include "drogon/HttpController.h"
+#include "drogon/HttpClient.h"
 
 #include "globals.hpp"
 
 #include "../modlib/fediymod.h"
+
+#include "HTTPRoutes/ModuleRoutes.hpp"
 
 class Mod;
 
@@ -27,28 +30,22 @@ public:
     virtual bool stop() = 0;
     virtual void handle_request(
             const drogon::HttpRequestPtr& req,
+            ModuleRoutes::User&& user,
             std::function<void(const drogon::HttpResponsePtr&)>&& callback
     ) = 0;
 
     // IPC interface
     enum class IPCType {
         SHARED_LIBRARY,     // .so file
-        SOCKET,        // unix socket connection
+        SOCKET,             // unix socket connection
         NETWORK             // tcp connection
     };
 
-    virtual IPCType ipc_type() = 0;
+    [[nodiscard]] virtual IPCType ipc_type() = 0;
 };
 
-
+// Message passed to shared library
 class ModDllIpcRequest : public fediy::fiy_request_t {
-private:
-    static char* new_cstr_from_string(const std::string_view& s) {
-        char* ret = new char[s.size() + 1];
-        strncpy(ret, s.data(), s.size());
-        return ret;
-    }
-
 public:
     std::function<void(const drogon::HttpResponsePtr&)> m_callback;
 
@@ -78,7 +75,6 @@ public:
         this->remove_from_task_queue();
     }
 
-
 };
 
 // Communicates with the module by dynamically linking
@@ -97,6 +93,7 @@ class ModDLLIPC : public ModIPC {
     }
 
 //    std::list<ModDllIpcRequest*> m_msg_queue;
+
 public:
     ModDLLIPC(Mod* mod, std::string path): ModIPC(mod, std::move(path)) {}
 
@@ -139,21 +136,43 @@ public:
         const drogon::HttpRequestPtr& req,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback
     ) override;
-
 };
 
+// IPC over the network
 class ModNetIPC : public ModIPC {
 public:
+    ModNetIPC(Mod* mod, std::string path): ModIPC(mod, std::move(path)) {}
 
-    IPCType ipc_type() {
+    IPCType ipc_type() final {
         return IPCType::NETWORK;
     }
+
+    virtual bool start() override {
+        // Assume the other server is already running
+        // send hostinfo as json
+        // expect modinfo as json
+    }
+
+    virtual bool stop() override {
+        // Invalidate credentials
+    }
+
+    virtual void handle_request(
+            const drogon::HttpRequestPtr& req,
+            std::function<void(const drogon::HttpResponsePtr&)>&& callback
+    ) override {
+        auto client = drogon::HttpClient::newHttpClient(m_ipc_uri);
+        auto user = //
+
+    };
 };
 
+// IPC over unix socket
 class ModSockIPC : public ModIPC {
 public:
+    ModSockIPC(Mod* mod, std::string path): ModIPC(mod, std::move(path)) {}
 
-    IPCType ipc_type() {
+    IPCType ipc_type() final {
         return IPCType::SOCKET;
     }
 };
