@@ -69,10 +69,12 @@ public:
     // Metadata
     std::string m_id;
     std::string m_name;
+    std::string m_path;
     std::string m_description;
     std::string m_icon;
     std::filesystem::file_time_type m_install_ts;
     Version m_version;
+    std::string m_daemon; // make it a BackgroundProcess ?
 
     // Communicate with mod
     std::unique_ptr<ModIPC> m_ipc{nullptr};
@@ -85,7 +87,7 @@ public:
     bool stop();
 
     void set_enabled(bool enabled);
-    void set_id(const std::string& id);
+    void set_path(const std::string& id);
 
     enum class Status {
         INVALID,    // failed to read module

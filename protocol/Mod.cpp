@@ -14,6 +14,7 @@
 
 Mod::Mod(std::string id) {
     m_id = std::move(id);
+    m_path = m_id;
 
     // Set error and log
     auto err = [this, &id](auto reason) {
@@ -25,11 +26,25 @@ Mod::Mod(std::string id) {
 
     // Load json from file
     std::filesystem::path mp = appdir();
+    if (!std::filesystem::exists(mp / "module.json")) {
+        err("missing module.json");
+        return;
+    }
     std::ifstream ifs{ mp / "module.json"};
     auto conf = nlohmann::json::parse( ifs );
     if (!conf.is_object()) {
         err("module.json: should be an object");
         return;
+    }
+
+    // Get routing path
+    if (conf.contains("path")) {
+        auto path = conf.at("path");
+        if (!path.is_string()) {
+            err("module.json: \"path\" should contain a uri component string");
+        }
+        // TODO validate uri component
+        m_path = path.get<std::string>();
     }
 
     // Get name
@@ -99,6 +114,19 @@ Mod::Mod(std::string id) {
         }
     }
 
+    if (conf.contains("daemon")) {
+        auto d = conf.at("daemon");
+        if (!d.is_string()) {
+            err("module.json: \"daemon\" should be a string path to a program");
+        } else {
+            m_daemon = d.get<std::string>();
+            if (!m_daemon.empty() && std::filesystem::exists(m_daemon)) {
+                err("module.json: \"daemon\" set to path that does not exist: " + m_daemon);
+                m_daemon = "";
+            }
+        }
+    }
+
     if (conf.contains("enabled")) {
         auto enabled = conf.at("enabled");
         if (enabled.is_boolean()) {
@@ -157,6 +185,8 @@ std::string Mod::json() {
             ? "tcp" : m_ipc->ipc_type() == ModIPC::IPCType::SHARED_LIBRARY
             ? "shared_object" : "socket" },
         { "ipc_uri", m_ipc->m_ipc_uri },
+        { "daemon", m_daemon },
+        { "path", m_path },
     };
     return json.dump();
 }
@@ -164,6 +194,7 @@ std::string Mod::json() {
 std::string Mod::user_json() {
     nlohmann::json json = {
         { "id", m_id },
+        { "path", m_path },
         { "version", m_version.str() },
         { "name", m_name },
         { "description", m_description },
@@ -192,10 +223,8 @@ void Mod::set_enabled(bool enabled) {
     save();
 }
 
-void Mod::set_id(const std::string& id) {
+void Mod::set_path(const std::string& path) {
     std::lock_guard lock(m_mtx);
-    auto old_appdir = appdir();
-    m_id = id;
-    std::filesystem::rename(old_appdir, appdir());
+    m_path = path;
     save();
 }

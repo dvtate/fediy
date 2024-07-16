@@ -11,7 +11,10 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/drogon)
 file(GLOB protocol_server_sources protocol/*.cpp)
 
 add_library(demo_mod SHARED
-        modlib/example_mod.c)
+        modlib/example_mod.c
+        util/BackgroundProcess.cpp
+        util/BackgroundProcess.hpp
+)
 
 add_executable(protocol_server ${protocol_server_sources}
     third_party/inih/ini.c

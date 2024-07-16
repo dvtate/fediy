@@ -47,14 +47,16 @@ public:
 // Message passed to shared library
 class ModDllIpcRequest : public fediy::fiy_request_t {
 public:
+    ModuleRoutes::User m_user;
     std::function<void(const drogon::HttpResponsePtr&)> m_callback;
 
     ModDllIpcRequest(
         const drogon::HttpRequestPtr& req,
+        ModuleRoutes::User&& user,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback
     );
 
-    ~ModDllIpcRequest() {
+    virtual ~ModDllIpcRequest() {
         delete[] this->body;
         delete[] this->path;
     }
@@ -134,12 +136,14 @@ public:
 
     void handle_request(
         const drogon::HttpRequestPtr& req,
+        ModuleRoutes::User&& user,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback
     ) override;
 };
 
 // IPC over the network
 class ModNetIPC : public ModIPC {
+    std::string m_auth_secret;
 public:
     ModNetIPC(Mod* mod, std::string path): ModIPC(mod, std::move(path)) {}
 
@@ -147,23 +151,37 @@ public:
         return IPCType::NETWORK;
     }
 
-    virtual bool start() override {
-        // Assume the other server is already running
-        // send hostinfo as json
-        // expect modinfo as json
-    }
-
-    virtual bool stop() override {
-        // Invalidate credentials
-    }
+    virtual bool start() override ;
+    virtual bool stop() override ;
+        // Invalidate credentials both ways
 
     virtual void handle_request(
             const drogon::HttpRequestPtr& req,
+            ModuleRoutes::User&& user,
             std::function<void(const drogon::HttpResponsePtr&)>&& callback
     ) override {
         auto client = drogon::HttpClient::newHttpClient(m_ipc_uri);
-        auto user = //
-
+        req->addHeader("fediy-user", user.user + '@' + user.domain);
+        client->sendRequest(
+            req,
+            [
+                this,
+                cb= std::move(callback)
+            ](
+                drogon::ReqResult status,
+                const drogon::HttpResponsePtr& resp
+            ) {
+//                if (status == drogon::ReqResult::Ok) {
+                if (resp != nullptr) {
+                    resp->setPassThrough(true);
+                    cb(resp);
+                } else {
+                    auto r = drogon::HttpResponse::newHttpResponse();
+                    r->setStatusCode(drogon::k500InternalServerError);
+                    cb(r);
+                }
+            }
+        );
     };
 };
 
@@ -175,4 +193,6 @@ public:
     IPCType ipc_type() final {
         return IPCType::SOCKET;
     }
+
+    // TODO
 };

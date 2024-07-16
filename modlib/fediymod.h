@@ -22,6 +22,10 @@ struct fiy_request_t {
     const char* user;       // null = unauthenticated
     const char* headers;
     const char* body;       // null = get request
+
+#ifdef __cplusplus
+    virtual ~fiy_request_t() = default;
+#endif
 };
 
 struct fiy_response_t {

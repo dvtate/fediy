@@ -56,15 +56,15 @@ public:
         return m->stop();
     }
 
-    bool update_id(const std::string& old_id, const std::string& new_id) {
+    bool update_id(const std::string& old_path, const std::string& new_path) {
         std::lock_guard lock(m_mtx);
-        if (m_mods.contains(new_id))
+        if (m_mods.contains(new_path))
             return false;
-        m_mods[new_id] = std::move(m_mods[old_id]);
-        m_mods.erase(old_id);
-        m_mods[new_id]->stop();
-        m_mods[new_id]->set_id(new_id);
-        m_mods[new_id]->start();
+        m_mods[new_path] = std::move(m_mods[old_path]);
+        m_mods.erase(old_path);
+//        m_mods[new_path]->stop();
+        m_mods[new_path]->set_path(new_path);
+//        m_mods[new_id]->start();
         return true;
     }
 };

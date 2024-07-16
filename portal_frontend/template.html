@@ -45,16 +45,19 @@
 
         <script>
             // From server
-            const userIsAdmin = true;            
+            const user = {
+                isAdmin: true,
+            };
             const installedApps = [
                 {
                     name: 'GitIY',
+                    appId: 'git',
                     iconUrl: 'https://www.zupimages.net/up/22/08/kl57.png',
                     version: '0.1.5',
                     installDate: 1715823299443,
-                    description: 'GitIY is an easy to use federated Git hosting service. You host your own git repos and can contribute to other people\'s projects.', 
-                    appId: 'git',
+                    description: 'GitIY is an easy to use federated Git hosting service. You host your own git repos and can contribute to other people\'s projects.',
                     canUpdate: false,
+                    enabled: true,
                 },
 
                 {
@@ -65,6 +68,7 @@
                     description: 'GitIY is an easy to use federated Git hosting service. You host your own git repos and can contribute to other people\'s projects.', 
                     appId: 'git2',
                     canUpdate: true,
+                    enabled: true,
                 },
                 {
                     name: 'farw',
@@ -74,6 +78,7 @@
                     description: 'asdgfasdf asdf is an easy to use federated Git hosting service. You host your own git repos and can contribute to other people\'s projects.', 
                     appId: 'git2',
                     canUpdate: true,
+                    enabled: false,
                 },
             ];
 
@@ -95,8 +100,8 @@
                         <div class="col-md-2 app-actions">
                             <button class="ms-btn ms-fullwidth ms-outline ms-primary" onclick="launchApp('${appId}')">Launch</button>
                             <button class="ms-btn ms-fullwidth ms-outline ms-primary" onclick="checkStoreApp('${appId}')">About</button>
-                            ${ (canUpdate && userIsAdmin) ? `<button class="ms-btn ms-fullwidth ms-outline ms-primary" onclick="updateApp('${appId}')">Update</button>` : '' }
-                            ${ userIsAdmin ? `<button class="ms-btn ms-fullwidth ms-outline ms-primary" onclick="uninstallApp('${appId}')">Uninstall</button>` : ''}
+                            ${ (canUpdate && user.isAdmin) ? `<button class="ms-btn ms-fullwidth ms-outline ms-primary" onclick="updateApp('${appId}')">Update</button>` : '' }
+                            ${ user.isAdmin ? `<button class="ms-btn ms-fullwidth ms-outline ms-primary" onclick="uninstallApp('${appId}')">Uninstall</button>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -119,14 +124,16 @@
                 ]);
             }
 
-
-
             // App actions
             function launchApp(appId) {}
+
             function updateApp(appId) {}
+            function enableApp(appId) {}
+            function disableApp(appId) {}
             function uninstallApp(appId) {
                 confirm('Are you sure you want to uninstall this app?');
             }
+
             function checkStoreApp(appId) {
                 // send them to store page
             }

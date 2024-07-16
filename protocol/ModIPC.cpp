@@ -15,15 +15,15 @@ static char* new_cstr_from_string(const std::string_view& s) {
 
 ModDllIpcRequest::ModDllIpcRequest(
         const drogon::HttpRequestPtr& req,
+        ModuleRoutes::User&& user,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback
-): m_callback(callback) {
+): m_user(user), m_callback(callback) {
+    // Initialize fiy_request_t
+    this->method = req->methodString();
     this->body = new_cstr_from_string(req->body());
     this->path = new_cstr_from_string(req->path());
-    this->domain = nullptr; // TODO
-    auto user = req->session()->getOptional<std::shared_ptr<LocalUser>>("user").value_or(nullptr);
-    if (user) {
-        this->user = new_cstr_from_string(user->get_username());
-    }
+    this->domain = m_user.domain;
+    this->user = m_user.user.c_str();
     this->headers = nullptr;
 }
 
@@ -45,9 +45,10 @@ void ModDLLIPC::gen_host_info() {
 
 void ModDLLIPC::handle_request(
     const drogon::HttpRequestPtr& req,
+    ModuleRoutes::User&& user,
     std::function<void(const drogon::HttpResponsePtr&)>&& callback
 ) {
-    auto* r = new ModDllIpcRequest(req, std::move(callback));
+    auto* r = new ModDllIpcRequest(req, std::move(user), std::move(callback));
     m_mod_info->on_request(
         r,
         [](
@@ -59,3 +60,20 @@ void ModDLLIPC::handle_request(
     );
 }
 
+
+bool ModNetIPC::start() {
+
+    // if server uri is localhost/127.0.0.1 then start the server
+
+    // Assume the other server is already running
+    // send hostinfo as json
+    // expect modinfo as json
+
+    // hostinfo should also include authentication system
+    // ie - credentials we can validate for every request
+    return true;
+}
+
+bool ModNetIPC::stop() {
+    return true;
+}

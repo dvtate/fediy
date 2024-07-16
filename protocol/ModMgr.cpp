@@ -8,11 +8,15 @@ void ModMgr::find_modules() {
     auto apps_dir = g_app->m_config.m_data_dir + "/apps";
     std::string fail_reason;
 
+    std::cout <<apps_dir <<std::endl;
+
     // TODO parallel
     for (auto& p : std::filesystem::directory_iterator(apps_dir))
         if (p.is_directory()) {
             auto id = p.path().filename().string();
-            m_mods.emplace(id, std::make_unique<Mod>(id));
+            auto m = std::make_unique<Mod>(id);
+            std::string path = m->m_path;
+            m_mods.emplace(std::move(path), std::move(m));
         }
     DEBUG_LOG("Found " + std::to_string(m_mods.size()) + " apps");
 }
