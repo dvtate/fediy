@@ -10,17 +10,19 @@
 static void handle_request(const struct fiy_request_t* request, fiy_callback_t callback) {
     // Allocate a body string to send to the user
     size_t body_len = 50
-        + strlen(request->user)
-        + strlen(request->domain)
-        + strlen(request->path);
+        + (request->user != NULL ? strlen(request->user) : 4)
+        + (request->domain != NULL ? strlen(request->domain) : 4)
+        + (request->method != NULL ? strlen(request->method) : 4)
+        + (request->path != NULL ? strlen(request->path) : 4);
     char* body = (char*) malloc(sizeof(char) * body_len);
     snprintf(
         body,
         body_len,
-        "Hello, @%s@%s! <br/>Path: %s",
-        request->user,
-        request->domain,
-        request->path
+        "Hello, @%s@%s! <br/>Action: %s %s",
+        request->user == NULL ? "null" : request->user,
+        request->domain == NULL ? "null" : request->domain,
+        request->method == NULL ? "null" : request->method,
+        request->path == NULL ? "null" : request->path
     );
 
     struct fiy_response_t resp = {
@@ -35,10 +37,12 @@ static void handle_request(const struct fiy_request_t* request, fiy_callback_t c
 }
 
 static void update_peer_domain(const char* old_domain, const char* new_domain) {
-
+    printf("Peer moved from %s to %s\n", old_domain, new_domain);
 }
 
-static void update_username(const char* domain, const char* old_username, const char* new_username) {}
+static void update_username(const char* old_username, const char* new_username) {
+    printf("User moved from %s to %s\n", old_username, new_username);
+}
 
 /**
  * Initialize the module so that it can begin accepting requests
@@ -55,10 +59,3 @@ struct fiy_mod_info_t* start(const struct fiy_host_info_t* host_info) {
     };
     return &mod_info;
 }
-
-// Called once before sever shuts down
-[[deprecated("may not get called in all cases, may terminate before call finishes")]]
-void stop() { }
-
-
-//

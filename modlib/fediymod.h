@@ -22,10 +22,6 @@ struct fiy_request_t {
     const char* user;       // null = unauthenticated
     const char* headers;
     const char* body;       // null = get request
-
-#ifdef __cplusplus
-    virtual ~fiy_request_t() = default;
-#endif
 };
 
 struct fiy_response_t {
@@ -53,8 +49,8 @@ struct fiy_mod_info_t {
     void (*on_peer_domain_changed)(const char* old_domain, const char* new_domain);
 
     /// username changed
-    // if domain is null, then user is local
-    void (*on_username_changed)(const char* domain, const char* old_username, const char* new_username);
+    /// @note usernames of form user@domain
+    void (*on_username_changed)(const char* old_username, const char* new_username);
 };
 
 // maybe this gets passed to library via host_info_t
@@ -74,8 +70,8 @@ struct fiy_mod_info_t {
  */
 typedef void (*fiy_send_request_t)(
     const char* app_id,
-    const fiy_request_t* request,
-    void (*callback)(const fiy_response_t*)
+    const struct fiy_request_t* request,
+    void (*callback)(const struct fiy_response_t*)
 );
 
 struct fiy_host_info_t {

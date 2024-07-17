@@ -10,12 +10,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/third_party/drogon)
 
 file(GLOB protocol_server_sources protocol/*.cpp)
 
-add_library(demo_mod SHARED
-        modlib/example_mod.c
-        util/BackgroundProcess.cpp
-        util/BackgroundProcess.hpp
-)
-
 add_executable(protocol_server ${protocol_server_sources}
     third_party/inih/ini.c
     protocol/ProtocolActions.hpp
@@ -62,4 +56,18 @@ target_link_libraries(protocol_server
     dl
     crypto
     drogon
+)
+
+
+add_library(demo_mod SHARED
+        modlib/example_mod.c
+        util/BackgroundProcess.cpp
+        util/BackgroundProcess.hpp
+)
+
+
+add_library(demo_mod_cpp SHARED
+        modlib/example_mod.cpp
+        util/BackgroundProcess.cpp
+        util/BackgroundProcess.hpp
 )

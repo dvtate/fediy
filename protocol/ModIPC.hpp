@@ -24,7 +24,8 @@ class ModIPC {
 public:
     Mod* m_mod{nullptr};
     std::string m_ipc_uri;
-    ModIPC(Mod* mod, std::string path): m_mod(mod), m_ipc_uri(path) {}
+    ModIPC(Mod* mod, std::string path): m_mod(mod), m_ipc_uri(std::move(path)) {}
+    virtual ~ModIPC() = default;
 
     virtual bool start() = 0;
     virtual bool stop() = 0;
@@ -82,8 +83,8 @@ public:
 // Communicates with the module by dynamically linking
 class ModDLLIPC : public ModIPC {
     void* m_dl_handle{nullptr};
-    fediy::fiy_mod_info_t* m_mod_info;
-    fediy::fiy_host_info_t* m_host_info;
+    fediy::fiy_mod_info_t* m_mod_info{nullptr};
+    fediy::fiy_host_info_t* m_host_info{nullptr};
 
     void gen_host_info();
     void free_host_info() {
@@ -100,7 +101,7 @@ public:
     ModDLLIPC(Mod* mod, std::string path): ModIPC(mod, std::move(path)) {}
 
     ~ModDLLIPC() {
-        stop();
+        ModDLLIPC::stop();
     }
 
     bool stop() override {

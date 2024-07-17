@@ -4,6 +4,8 @@
 
 #include "Mod.hpp"
 
+// TODO refactor so that it handles ids and path lookups better
+
 class ModMgr {
 protected:
     std::map<std::string, std::unique_ptr<Mod>> m_mods;
@@ -17,8 +19,16 @@ public:
 
     bool start_all();
 
-    std::unique_ptr<Mod>& get_mod(const std::string& id) {
-        auto ret = m_mods.find(id);
+    const Mod* get_mod_by_id(const std::string& id) {
+        // TODO this should be O(1)
+        for (const Mod* m: this->get_mods())
+            if (m->m_id == id)
+                return m;
+        return nullptr;
+    }
+
+    std::unique_ptr<Mod>& get_mod(const std::string& path) {
+        auto ret = m_mods.find(path);
         if (ret != m_mods.end())
             return ret->second;
 
@@ -27,6 +37,8 @@ public:
     }
 
     const std::vector<Mod*>& get_mods() {
+        // TODO ????
+
         // Using shared, cached result
         if (m_mods_list_cache_valid)
             return m_mods_list_cache;

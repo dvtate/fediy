@@ -25,6 +25,7 @@ bool App::start() {
     m_pages = std::make_unique<Pages>();
 
     PortalRoutes::initPathRouting();
+    ModuleRoutes::initPathRouting();
 
     return true;
 }

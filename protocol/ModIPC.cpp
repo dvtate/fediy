@@ -20,8 +20,8 @@ ModDllIpcRequest::ModDllIpcRequest(
 ): m_user(user), m_callback(callback) {
     // Initialize fiy_request_t
     this->method = req->methodString();
-    this->body = new_cstr_from_string(req->body());
     this->path = new_cstr_from_string(req->path());
+    this->body = new_cstr_from_string(req->body());
     this->domain = m_user.domain;
     this->user = m_user.user.c_str();
     this->headers = nullptr;
@@ -48,7 +48,8 @@ void ModDLLIPC::handle_request(
     ModuleRoutes::User&& user,
     std::function<void(const drogon::HttpResponsePtr&)>&& callback
 ) {
-    auto* r = new ModDllIpcRequest(req, std::move(user), std::move(callback));
+    fediy::fiy_request_t* r = new ModDllIpcRequest(req, std::move(user), std::move(callback));
+    // everything good up to here
     m_mod_info->on_request(
         r,
         [](
