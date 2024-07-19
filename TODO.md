@@ -1,6 +1,5 @@
 # TODO
-- make nginx module instead of drogon
-  - https://github.com/vision5/ngx_devel_kit?tab=readme-ov-file#usage-for-users
+- replace/modify drogon so that we can support WebDAV HTTP methods
 - use drogon db wrapper
 - demo mod
   - library

@@ -6,7 +6,10 @@
 
 // TODO refactor so that it handles ids and path lookups better
 
-class ModMgr {
+/**
+ * Interface and cache for managing the installed apps
+ */
+class Mods {
 protected:
     std::map<std::string, std::unique_ptr<Mod>> m_mods;
     std::mutex m_mtx;

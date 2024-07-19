@@ -167,7 +167,7 @@ public:
             req,
             [
                 this,
-                cb= std::move(callback)
+                cb = std::move(callback)
             ](
                 drogon::ReqResult status,
                 const drogon::HttpResponsePtr& resp

@@ -101,8 +101,9 @@ Mod::Mod(std::string id) {
         if (ts == "tcp") {
             if (ipc_uri.empty()) {
                 err("module.json: \"ipc_uri\" must be defined when \"ipc\" is set to \"tcp\"");
+            } else {
+                m_ipc = std::make_unique<ModNetIPC>(this, ipc_uri);
             }
-//            m_ipc = std::make_unique<ModNetIPC>(ipc_uri);
         } else if (ts == "shared_object") {
             if (ipc_uri.empty())
                 ipc_uri = mp / "module.so";
@@ -175,18 +176,35 @@ bool Mod::stop() {
 
 std::string Mod::json() {
     nlohmann::json json = {
+        // Identifier speficying the protocol the app implemets
+        // Multiple apps can have the same id only if they're compatible
+        //      ie - chat.v3
         { "id", m_id },
+
+        // This is the path that the users can use to access the mod (locally unique)
+        { "path", m_path },
+
+        // App version of the form X.y or just X
         { "version", m_version.str() },
+
+        // User-readable name for the app
         { "name", m_name },
+
+        // User-readable description of the app and what it does
         { "description", m_description },
+
+        // App icon
         { "icon", m_icon },
+
+        // User can disable apps they don't want
         { "enabled", m_enabled },
+
+        //
         { "ipc", m_ipc->ipc_type() == ModIPC::IPCType::NETWORK
             ? "tcp" : m_ipc->ipc_type() == ModIPC::IPCType::SHARED_LIBRARY
             ? "shared_object" : "socket" },
         { "ipc_uri", m_ipc->m_ipc_uri },
         { "daemon", m_daemon },
-        { "path", m_path },
     };
     return json.dump();
 }

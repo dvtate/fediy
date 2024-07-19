@@ -5,16 +5,19 @@
 #include "Peers.hpp"
 #include "DB.hpp"
 #include "Config.hpp"
-#include "ModMgr.hpp"
+#include "Mods.hpp"
 #include "Pages.hpp"
 
+/**
+ * Global protocol server app singleton
+ */
 class App {
 
 public:
     AppConfig m_config;
     Peers m_cache;
     std::unique_ptr<DB> m_db;
-    ModMgr m_mods;
+    Mods m_mods;
     std::unique_ptr<Pages> m_pages;
 
     App() = default;
@@ -22,7 +25,6 @@ public:
     void run(int argc, char** argv);
 
     bool start();
-
 
 };
 

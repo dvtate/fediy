@@ -3,3 +3,10 @@
 //
 
 #include "PeerRoutes.hpp"
+
+void PeerRoutes::pubkey(
+    const drogon::HttpRequestPtr& req,
+    std::function<void(const drogon::HttpResponsePtr&)>&& callback
+) {
+
+}

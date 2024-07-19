@@ -1,4 +1,4 @@
-# Federated Git
+# Protocol + Federated Git
 
 ## Big Features/Selling points
 - Data ownership
@@ -20,17 +20,24 @@
 - Cloud-IY: Nextcloud competitor
 - Kanban-IY: jira/trello/etc. killer
 
-
-
-Architecture?:
-- Platform/protocl:
-  - manage apps (add, remove, change settings), users
-  - acts as a middleman between apps that handles authentication
-  - communicates with the servers
-- Library: utils for building and interacting with apps on the platform
-- Apps: use library to handle fediverse to gain access to authentication and stuff
-	- Apps are run and stopped by the platform
-
+## Components
+Eventually these will all get moved to separate repos
+- Protocol Server:
+    - User/admin portal: account creation and management, app list, server management?, etc.
+    - Module/app management:
+    - Peer/Authenticaiton:
+- Shop:
+    - How users are able to find and pay for mods
+    - Would be cool if they had a
+- Apps:
+    - fediymod.h: compile a .so file for your mod using interface provided
+    - 
+    - Simple chat app/social network/blog?
+    -
+- Landing page
+- Supporting sites:
+    - Git adopt
+    - Modnet to handle platform abuse
 
 MVP:
 - authentication

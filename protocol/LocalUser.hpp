@@ -7,6 +7,9 @@
 
 #include "Peer.hpp"
 
+/**
+ * User authenticated on our instance (not remotee)
+ */
 class LocalUser {
     std::string m_name;
     // TODO how do we handle updating users safely?
@@ -41,6 +44,11 @@ public:
         m_about(std::move(about))
     {}
 
+    /**
+     * Update user's username
+     * @param name
+     * @return nullptr on success, reason string on fail
+     */
     const char* set_name(std::string name) {
         if (name.size() > 128)
             return "Name must be less than 128 characters";
@@ -51,6 +59,11 @@ public:
         return m_name.empty() ? m_username : m_name;
     }
 
+    /**
+     * Update user's username
+     * @param username
+     * @return nullptr on success, reason string on fail
+     */
     const char* set_username(std::string username) {
         if (username.size() > 32)
             return "Username must be less than 32 characters";
@@ -58,6 +71,8 @@ public:
             if (!isalnum(c))
                 return "Username must have only alphanumeric characters";
         m_username = std::move(username);
+        // TODO notify peers & apps
+        return nullptr;
     }
 
     [[nodiscard]] const std::string& get_username() const {

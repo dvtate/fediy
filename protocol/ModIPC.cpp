@@ -23,7 +23,7 @@ ModDllIpcRequest::ModDllIpcRequest(
     this->path = new_cstr_from_string(req->path());
     this->body = new_cstr_from_string(req->body());
     this->domain = m_user.domain;
-    this->user = m_user.user.c_str();
+    this->user = m_user.user == " " ? nullptr : m_user.user.c_str();
     this->headers = nullptr;
 }
 

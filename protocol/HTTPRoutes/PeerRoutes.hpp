@@ -25,8 +25,7 @@
 
 class PeerRoutes : public drogon::HttpController<PeerRoutes, false> {
 public:
-
-    PeerRoutes() {}
+    PeerRoutes() = default;
 
     // Send our public key
     void pubkey(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);

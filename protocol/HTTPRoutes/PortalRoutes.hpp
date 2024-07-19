@@ -9,8 +9,7 @@
 
 class PortalRoutes : public drogon::HttpController<PortalRoutes, false> {
 public:
-
-    PortalRoutes() {}
+    PortalRoutes() = default;
 
     void login_get(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
     void login_post(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
@@ -21,7 +20,6 @@ public:
 //    void main_css(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
 //    void settings_get(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
 //    void settings_post(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
-
 
     METHOD_LIST_BEGIN
         ADD_METHOD_TO(PortalRoutes::login_get, "/portal/login", drogon::HttpMethod::Get);

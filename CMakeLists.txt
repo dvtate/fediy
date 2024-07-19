@@ -15,8 +15,8 @@ add_executable(protocol_server ${protocol_server_sources}
     protocol/ProtocolActions.hpp
     protocol/Mod.cpp
     protocol/Mod.hpp
-    protocol/ModMgr.cpp
-    protocol/ModMgr.hpp
+    protocol/Mods.cpp
+    protocol/Mods.hpp
     protocol/LocalUser.cpp
     protocol/Pages.cpp
     protocol/Pages.hpp

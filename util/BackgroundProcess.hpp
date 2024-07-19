@@ -7,6 +7,9 @@
 #include <unistd.h>
 #include <string>
 
+/**
+ * Child process management
+ */
 class BackgroundProcess {
 public:
     pid_t m_pid;

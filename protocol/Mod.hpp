@@ -11,8 +11,13 @@
 
 // TODO abstract base with child classes for each method of sending requests to the modules
 
-class ModMgr;
+class Mods;
 
+/**
+ * Installed app interface
+ *
+ * @note Apps and Mods refer to the same thing but referred to as Mods in the code to reduce ambiguity
+ */
 class Mod {
 protected:
     std::mutex m_mtx; // for operations on the module config
@@ -119,5 +124,5 @@ public:
 //
 //    }
 
-    friend class ModMgr;
+    friend class Mods;
 };

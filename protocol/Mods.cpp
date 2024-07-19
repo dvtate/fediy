@@ -2,9 +2,9 @@
 
 #include "App.hpp"
 
-#include "ModMgr.hpp"
+#include "Mods.hpp"
 
-void ModMgr::find_modules() {
+void Mods::find_modules() {
     auto apps_dir = g_app->m_config.m_data_dir + "/apps";
     std::string fail_reason;
 
@@ -21,7 +21,7 @@ void ModMgr::find_modules() {
     DEBUG_LOG("Found " + std::to_string(m_mods.size()) + " apps");
 }
 
-bool ModMgr::start_all() {
+bool Mods::start_all() {
     bool ret = true;
     for (auto& [id, mod]: m_mods) {
         if (!mod->m_loaded)

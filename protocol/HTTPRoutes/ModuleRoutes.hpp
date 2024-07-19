@@ -11,6 +11,7 @@
 
 class ModuleRoutes : public drogon::HttpController<ModuleRoutes, false> {
 public:
+    ModuleRoutes() = default;
 
     struct User {
         const char* domain{nullptr};

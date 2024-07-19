@@ -3,11 +3,15 @@
 #include <atomic>
 #include <mutex>
 
-
+/**
+ * Mutex that supports multiple simultaneous reads but only a single write
+ */
 struct RWMutex {
+protected:
     std::mutex m_mtx;
     std::atomic<unsigned short> m_readers{0};
 
+public:
     void read_lock() {
         m_mtx.lock();
         m_readers++;
@@ -18,6 +22,9 @@ struct RWMutex {
         m_readers--;
     }
 
+    /**
+     * Upgrade read lock to write lock (optimization)
+     */
     void read_to_write() {
         m_mtx.lock();
         m_readers--;
@@ -32,6 +39,7 @@ struct RWMutex {
         m_mtx.unlock();
     }
 
+    /// Scoped write_lock + write_unlock
     struct LockForWrite {
         RWMutex& m_mtx;
         explicit LockForWrite(RWMutex& mtx): m_mtx(mtx) {
@@ -42,6 +50,7 @@ struct RWMutex {
         }
     };
 
+    /// Scoped read_lock + read_unlock
     struct LockForRead {
         RWMutex& m_mtx;
         explicit LockForRead(RWMutex& mtx): m_mtx(mtx) {

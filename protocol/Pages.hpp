@@ -11,6 +11,9 @@
 // TODO i18n
 // TODO minification
 
+/**
+ * Handles server-side rendering of pages via templating engine
+ */
 class Pages {
     kainjow::mustache::mustache
         m_portal_apps_template,

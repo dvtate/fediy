@@ -37,9 +37,12 @@ protected:
     // TODO write changes?
 };
 
-
+/**
+ * Parse protocol server config file
+ */
 class AppConfig : public Config {
 public:
+    // TODO move to /etc
     static constexpr const char* CONFIG_FILE_PATH = "/opt/fediy/config.ini";
 
     explicit AppConfig(const std::string& path = CONFIG_FILE_PATH): Config(path) {};
