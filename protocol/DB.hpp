@@ -10,7 +10,6 @@
 
 // TODO instead use one drogon framework templates
 
-
 class DB {
 public:
     SQLite::Database m_db;

@@ -50,6 +50,5 @@ void ModuleRoutes::app_send_msg(
         uri = req->path().data() + slash_idx;
     }
 //    std::cout <<"Calling " <<app <<" : " << uri <<std::endl;
-
     g_app->m_mods.get_mod_by_path(app)->m_ipc->handle_request(req, find_user(req), std::move(callback));
 }

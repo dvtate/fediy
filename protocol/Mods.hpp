@@ -16,9 +16,9 @@ protected:
      * Also need fast iteration over mods
      *Don't care about insertion time
      */
+    RWMutex m_mtx; // TODO compare performance of just using std::mutex
 
     std::vector<Mod*> m_mods;
-    RWMutex m_mtx; // TODO compare performance of just using std::mutex
     std::unordered_map<std::string, Mod*> m_mods_by_id;
     std::unordered_map<std::string, Mod*> m_mods_by_path;
 
@@ -42,6 +42,7 @@ public:
 
     void find_modules();
     bool start_all();
+    bool stop_all();
 
     void clear() {
         RWMutex::LockForWrite lock{m_mtx};
