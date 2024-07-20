@@ -13,25 +13,23 @@ void Mods::find_modules() {
     // TODO parallel
     for (auto& p : std::filesystem::directory_iterator(apps_dir))
         if (p.is_directory()) {
-            auto id = p.path().filename().string();
-            auto m = std::make_unique<Mod>(id);
-            std::string path = m->m_path;
-            m_mods.emplace(std::move(path), std::move(m));
+            auto&& id = p.path().filename().string();
+            m_mods.emplace_back(new Mod(id));
         }
     DEBUG_LOG("Found " + std::to_string(m_mods.size()) + " apps");
 }
 
 bool Mods::start_all() {
     bool ret = true;
-    for (auto& [id, mod]: m_mods) {
+    for (auto* mod: m_mods) {
         if (!mod->m_loaded)
             continue;
-        DEBUG_LOG("Starting module: " + id + "...");
+        DEBUG_LOG("Starting module: " + mod->m_id + "...");
         if (!mod->start()) {
-            LOG("Failed to start module " + id);
+            LOG("Failed to start module " + mod->m_id);
             ret = false;
         } else {
-            LOG("Successfully started module " + id);
+            LOG("Successfully started module " + mod->m_id);
         }
     }
     return ret;

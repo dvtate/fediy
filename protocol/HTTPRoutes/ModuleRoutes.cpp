@@ -25,7 +25,7 @@ void ModuleRoutes::app_redirect(
         const drogon::HttpRequestPtr& req,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback
 ) {
-    auto& m = g_app->m_mods.get_mod(req->getRoutingParameters()[0]);
+    const auto m = g_app->m_mods.get_mod_by_id(req->getRoutingParameters()[0]);
     if (m == nullptr) {
         static auto ret404 = drogon::HttpResponse::newNotFoundResponse();
         callback(ret404);
@@ -39,7 +39,6 @@ void ModuleRoutes::app_send_msg(
         const drogon::HttpRequestPtr& req,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback
 ) {
-    std::cout <<"App send msg route: " <<req->path() <<std::endl;
     const auto slash_idx = req->path().find('/', 1);
     std::cout <<slash_idx <<std::endl;
     std::string app, uri;
@@ -50,7 +49,7 @@ void ModuleRoutes::app_send_msg(
         app = req->path().substr(1, slash_idx - 1);
         uri = req->path().data() + slash_idx;
     }
-    std::cout <<"calling " <<app <<" : " << uri <<std::endl;
+//    std::cout <<"Calling " <<app <<" : " << uri <<std::endl;
 
-    g_app->m_mods.get_mod(app)->m_ipc->handle_request(req, find_user(req), std::move(callback));
+    g_app->m_mods.get_mod_by_path(app)->m_ipc->handle_request(req, find_user(req), std::move(callback));
 }

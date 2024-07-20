@@ -11,75 +11,88 @@
  */
 class Mods {
 protected:
-    std::map<std::string, std::unique_ptr<Mod>> m_mods;
-    std::mutex m_mtx;
-    std::vector<Mod*> m_mods_list_cache;
-    volatile bool m_mods_list_cache_valid{false};
+    /* Design considerations
+     * Need fast lookups for mods by path+id
+     * Also need fast iteration over mods
+     *Don't care about insertion time
+     */
+
+    std::vector<Mod*> m_mods;
+    RWMutex m_mtx; // TODO compare performance of just using std::mutex
+    std::unordered_map<std::string, Mod*> m_mods_by_id;
+    std::unordered_map<std::string, Mod*> m_mods_by_path;
+
+    void populate_caches() {
+        // m_mtx should be locked for write
+        auto mod_count = m_mods.size();
+        m_mods_by_id.reserve(mod_count);
+        m_mods_by_path.reserve(mod_count);
+        for (int i = 0; i < mod_count; i++) {
+            m_mods_by_id[m_mods[i]->m_id] = m_mods[i];
+            m_mods_by_path[m_mods[i]->m_path] = m_mods[i];
+        }
+    }
 
 public:
 
-    void find_modules();
+    Mods() = default;
+    ~Mods() {
+        clear();
+    }
 
+    void find_modules();
     bool start_all();
 
-    const Mod* get_mod_by_id(const std::string& id) {
-        // TODO this should be O(1)
-        for (const Mod* m: this->get_mods())
-            if (m->m_id == id)
-                return m;
-        return nullptr;
+    void clear() {
+        RWMutex::LockForWrite lock{m_mtx};
+        for (auto* m : m_mods)
+#ifndef FEDIY_DEBUG
+            if (m != nullptr)
+#endif
+            delete m;
     }
 
-    std::unique_ptr<Mod>& get_mod(const std::string& path) {
-        auto ret = m_mods.find(path);
-        if (ret != m_mods.end())
+    Mod* get_mod_by_path(const std::string& path) {
+        RWMutex::LockForRead lock{m_mtx};
+        auto ret = m_mods_by_path.find(path);
+        if (ret != m_mods_by_path.end())
             return ret->second;
-
-        static std::unique_ptr<Mod> not_found = nullptr;
-        return not_found;
+        else
+            return nullptr;
+    }
+    Mod* get_mod_by_id(const std::string& id) {
+        RWMutex::LockForRead lock{m_mtx};
+        auto ret = m_mods_by_id.find(id);
+        if (ret != m_mods_by_id.end())
+            return ret->second;
+        else
+            return nullptr;
     }
 
-    const std::vector<Mod*>& get_mods() {
-        // TODO ????
-
-        // Using shared, cached result
-        if (m_mods_list_cache_valid)
-            return m_mods_list_cache;
-
-        // Check if another thread already finished it
-        m_mtx.lock();
-        if (m_mods_list_cache_valid)
-            return m_mods_list_cache;
-
-        m_mods_list_cache.clear();
-        m_mods_list_cache.reserve(m_mods.size());
-        for (auto& [id, mod]: m_mods)
-            m_mods_list_cache.emplace_back(&*mod);
-        m_mods_list_cache_valid = true;
-        m_mtx.unlock();
-        return m_mods_list_cache;
+    inline std::vector<Mod*> get_mods() {
+        RWMutex::LockForRead lock{m_mtx};
+        return m_mods; // copy
     }
 
     bool remove_mod(const std::string& id) {
-        std::lock_guard lock(m_mtx);
-        m_mods_list_cache_valid = false;
-        auto m = std::move(get_mod(id));
-        m->m_mtx.lock();
+        RWMutex::LockForWrite lock{m_mtx};
+        auto m = get_mod_by_id(id);
         if (m == nullptr)
             return false;
-        m_mods.erase(id);
+        auto it = std::find(m_mods.begin(), m_mods.end(), m);
+        m_mods.erase(it);
+        m_mods_by_path.erase(m->m_path);
+        m_mods_by_id.erase(m->m_id);
         return m->stop();
     }
 
-    bool update_id(const std::string& old_path, const std::string& new_path) {
-        std::lock_guard lock(m_mtx);
-        if (m_mods.contains(new_path))
+    bool update_path(const std::string& old_path, const std::string& new_path) {
+        RWMutex::LockForWrite lock{m_mtx};
+        if (m_mods_by_path.contains(new_path))
             return false;
-        m_mods[new_path] = std::move(m_mods[old_path]);
-        m_mods.erase(old_path);
-//        m_mods[new_path]->stop();
-        m_mods[new_path]->set_path(new_path);
-//        m_mods[new_id]->start();
+        auto m = (m_mods_by_path[new_path] = m_mods_by_path[old_path]);
+        m->set_path(new_path);
+        m_mods_by_path.erase(old_path);
         return true;
     }
 };
