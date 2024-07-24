@@ -45,17 +45,16 @@ struct fiy_mod_info_t {
     /// Handle http requests to the module
     void (*on_request)(const struct fiy_request_t* request, fiy_callback_t callback);
 
-    /// peer domain changed
+    /// Peer domain changed
     void (*on_peer_domain_changed)(const char* old_domain, const char* new_domain);
 
-    /// username changed
+    /// Username changed
     /// @note usernames of form user@domain
     void (*on_username_changed)(const char* old_username, const char* new_username);
 };
 
-// maybe this gets passed to library via host_info_t
 /**
- * Send a request
+ * Send a request to another app
  * @param app_id app to send the request to
  * @param request request to send to the other app
  *      method   - http method
@@ -68,7 +67,9 @@ struct fiy_mod_info_t {
  * - an app on server a can only send requests to apps on server b on behalf of users residing on server a
  *    - this prevents false impersonation
  */
+//struct fiy_host_info_t;
 typedef void (*fiy_send_request_t)(
+//    const struct fiy_host_info_t* host,
     const char* app_id,
     const struct fiy_request_t* request,
     void (*callback)(const struct fiy_response_t*)

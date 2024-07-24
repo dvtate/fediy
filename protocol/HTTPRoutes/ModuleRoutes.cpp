@@ -39,16 +39,44 @@ void ModuleRoutes::app_send_msg(
         const drogon::HttpRequestPtr& req,
         std::function<void(const drogon::HttpResponsePtr&)>&& callback
 ) {
-    const auto slash_idx = req->path().find('/', 1);
-    std::cout <<slash_idx <<std::endl;
+    // Check to see if it's using a subdomain
     std::string app, uri;
-    if (slash_idx == -1) {
-        app = req->path().data() + 1;
-        uri = "/";
-    } else {
-        app = req->path().substr(1, slash_idx - 1);
-        uri = req->path().data() + slash_idx;
+    auto hostname = req->getHeader("Host");
+    if (!hostname.empty()) {
+        auto& hhn = g_app->m_config.m_hostname;
+        if (hostname.ends_with(hhn) && hhn.size() != hostname.size()) {
+            // Subdomain app  app.example.com/uri/path
+            app = hostname.substr(0, hostname.size() - hhn.size() - 1);
+            uri = req->path();
+        } else if (hostname != hhn) {
+            // Invalid request to different host?
+            auto r = drogon::HttpResponse::newHttpResponse(
+                drogon::HttpStatusCode::k400BadRequest,
+                drogon::ContentType::CT_TEXT_HTML
+            );
+            r->setBody("Wrong host? Expected host to be " + hhn + " but host was " + hostname);
+            callback(r);
+            return;
+        } else {
+            // Not a subdomain app  example.com/app/uri/path
+            const auto slash_idx = req->path().find('/', 1);
+            std::cout <<"slash_idx = " <<slash_idx <<std::endl;
+            if (slash_idx == -1) {
+                app = req->path().data() + 1;
+                uri = "/";
+            } else {
+                app = req->path().substr(1, slash_idx - 1);
+                uri = req->path().data() + slash_idx;
+            }
+        }
     }
-//    std::cout <<"Calling " <<app <<" : " << uri <<std::endl;
-    g_app->m_mods.get_mod_by_path(app)->m_ipc->handle_request(req, find_user(req), std::move(callback));
+
+    // Forward to app
+    DEBUG_LOG("Calling " <<app <<" : " << uri);
+    Mod* m = g_app->m_mods.get_mod_by_path(app);
+    if (m == nullptr) {
+        callback(drogon::HttpResponse::newNotFoundResponse(req));
+        return;
+    }
+    m->m_ipc->handle_request(req, find_user(req), std::move(callback));
 }

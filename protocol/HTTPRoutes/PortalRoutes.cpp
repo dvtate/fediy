@@ -230,3 +230,16 @@ void PortalRoutes::home_get(
 
     callback(resp);
 }
+
+void PortalRoutes::test(
+    const drogon::HttpRequestPtr& req,
+    std::function<void(const drogon::HttpResponsePtr&)>&& callback
+) {
+    std::string ret;
+    ret = "Path: " + req->getPath() + "<br/>\n\n" + "OrigPath: " + req->getOriginalPath() + "<br/>\n\n";
+    ret += "Host: " + req->getHeader("Host") + "<br/>\n\n";
+
+    auto resp = drogon::HttpResponse::newHttpResponse(drogon::HttpStatusCode::k200OK, drogon::ContentType::CT_TEXT_HTML);
+    resp->setBody(std::move(ret));
+    callback(resp);
+}

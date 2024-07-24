@@ -62,7 +62,6 @@ public:
         return now > m_expire_ts;
     }
 
-    
 };
 
 // This is another server on a different domain

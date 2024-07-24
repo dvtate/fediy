@@ -245,4 +245,6 @@ void Mod::set_path(const std::string& path) {
     std::lock_guard lock(m_mtx);
     m_path = path;
     save();
+    stop();
+    start();
 }

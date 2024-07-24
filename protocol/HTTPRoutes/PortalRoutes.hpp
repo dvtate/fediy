@@ -21,6 +21,8 @@ public:
 //    void settings_get(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
 //    void settings_post(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
 
+    void test(const drogon::HttpRequestPtr& req, std::function<void(const drogon::HttpResponsePtr&)>&& callback);
+
     METHOD_LIST_BEGIN
         ADD_METHOD_TO(PortalRoutes::login_get, "/portal/login", drogon::HttpMethod::Get);
         ADD_METHOD_TO(PortalRoutes::login_post, "/portal/login", drogon::HttpMethod::Post);
@@ -28,7 +30,7 @@ public:
         ADD_METHOD_TO(PortalRoutes::signup_post, "/portal/signup", drogon::HttpMethod::Post); // TODO this should be via invite code only
         ADD_METHOD_TO(PortalRoutes::main_js, "/portal/main.js", drogon::HttpMethod::Get);
         ADD_METHOD_TO(PortalRoutes::home_get, "/portal", drogon::HttpMethod::Get);
-
+        ADD_METHOD_TO(PortalRoutes::test, "/test", drogon::HttpMethod::Get);
 //        ADD_METHOD_TO(PortalRoutes::settings_get, "/portal/settings", drogon::HttpMethod::Get);
 //        ADD_METHOD_TO(PortalRoutes::settings_post, "/portal/settings", drogon::HttpMethod::Post);
 //        ADD_METHOD_TO(PortalRoutes::main_css, "/portal/main.css", drogon::Get);
