@@ -80,3 +80,19 @@ void ModuleRoutes::app_send_msg(
     }
     m->m_ipc->handle_request(req, find_user(req), std::move(callback));
 }
+
+void ModSdCheckMiddleware::invoke(
+    const drogon::HttpRequestPtr& req,
+    drogon::MiddlewareNextCallback&& nextCb,
+    drogon::MiddlewareCallback&& mcb
+) {
+    // It's an app!
+    static const auto& hn = g_app->m_config.m_hostname;
+    if (req->getHeader("Host") != hn) {
+        ModuleRoutes::app_send_msg(req, std::move(mcb));
+        return;
+    }
+
+    // Go next
+    nextCb(std::move(mcb));
+}

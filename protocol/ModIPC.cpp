@@ -8,8 +8,9 @@
 #include "App.hpp"
 
 static char* new_cstr_from_string(const std::string_view& s) {
-    char* ret = new char[s.size() + 1];
-    strncpy(ret, s.data(), s.size());
+    auto l = s.size();
+    char* ret = new char[l + 1];
+    strncpy(ret, s.data(), l + 1);
     return ret;
 }
 
