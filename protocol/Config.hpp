@@ -47,7 +47,7 @@ public:
     std::string m_data_dir{"/opt/fediy"};
 
     /// Domain where we're hosting the the service
-    std::string m_hostname{"localhost"};
+    char* m_hostname;
 
     /// Should clients+peers use SSL?
     bool m_ssl{true};
@@ -57,6 +57,9 @@ public:
     // if they try to change their salt to that of another user they'll get locked out
     // install package generates admin account
     std::string m_salt;
+
+    /// TCP port number to bind to
+    int m_port{8848};
 
     // TODO parse public and private keys
 

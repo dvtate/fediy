@@ -40,11 +40,18 @@ Eventually these will all get moved to separate repos
     - Modnet to handle platform abuse
 
 MVP:
-- authentication
-- module loading
-- hosted repos
-- limited/no gui
-
+- Protocol
+  - [x] local user authentication
+  - [ ] peer authorization
+    - [ ] p2p auth
+    - [ ] p2p user auth
+  - [x] module loading
+    - [x] .so
+    - [ ] http (needs security)
+    - [ ] unix sockets
+- Git module
+  - [ ] hosted repos
+  - [ ] limited/no gui
 
 
 # Data Directory

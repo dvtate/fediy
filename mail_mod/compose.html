@@ -1,0 +1,19 @@
+<!doctype html><html><body>
+<form action='javascript:submit()''>
+    To: <input type='text' id='inp-to' placeholder='tate@dvtt.net,test@example.com,jerry' />
+    Subject: <input type='text' id='inp-subject' placeholder='Important message' />
+    Body: <textarea id='inp-body'>Write your email here</textarea>
+    <button type='submit'>Send</button>
+</form>
+<script>
+    async function submit() {
+        fetch('send', {
+            method: 'POST',
+            body: document.getElementById('inp-to').value
+                + '\n' + document.getElementById('inp-subject').value
+                + '\n' + document.getElementById('inp-body').value
+        }).then(v => window.location = 'outbox')
+        .catch(console.error);
+    }
+</script>
+</body></html>

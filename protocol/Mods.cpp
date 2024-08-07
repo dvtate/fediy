@@ -8,8 +8,6 @@ void Mods::find_modules() {
     auto apps_dir = g_app->m_config.m_data_dir + "/apps";
     std::string fail_reason;
 
-    std::cout <<apps_dir <<std::endl;
-
     // TODO parallel
     for (auto& p : std::filesystem::directory_iterator(apps_dir))
         if (p.is_directory()) {

@@ -8,13 +8,15 @@ App* g_app;
 
 int main(int argc, char** argv) {
     // Start app services
-    g_app = new App();
+    g_app = (argc >= 2) ? new App(argv[1]) : new App(); // specify path to config file
     g_app->start();
 
     using namespace std::chrono_literals;
-    // All sessions are stored for 48 Hours
     drogon::app()
         .enableSession(48h)
-        .addListener("127.0.0.1", 8848)
+//        .setLogLevel(trantor::Logger::kTrace)
+        .setLogLevel(trantor::Logger::kDebug)
+        .addListener("127.0.0.1", g_app->m_config.m_port)
+//        .enableRunAsDaemon()
         .run();
 }

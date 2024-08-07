@@ -26,6 +26,7 @@ bool App::start() {
 
     PortalRoutes::initPathRouting();
     ModuleRoutes::initPathRouting();
+    PeerRoutes::initPathRouting();
 
     return true;
 }

@@ -15,17 +15,17 @@ class App {
 
 public:
     AppConfig m_config;
-    Peers m_cache;
+    Peers m_peers;
     std::unique_ptr<DB> m_db;
     Mods m_mods;
     std::unique_ptr<Pages> m_pages;
 
     App() = default;
-
-    void run(int argc, char** argv);
+    explicit App(const std::string& config_path):
+        m_config(config_path)
+    {}
 
     bool start();
-
 };
 
 // Global Singleton set in main.c

@@ -54,19 +54,57 @@ void PeerRoutes::pubkey(
 //}
 //std::string write_handshake(HandshakeMsg msg);
 
+std::vector<std::string> split_string(const std::string_view& str,
+                                      const std::string& delimiter)
+{
+    std::vector<std::string> strings;
+
+    std::string::size_type pos = 0;
+    std::string::size_type prev = 0;
+    while ((pos = str.find(delimiter, prev)) != std::string::npos)
+    {
+        strings.emplace_back(str.substr(prev, pos - prev));
+        prev = pos + delimiter.size();
+    }
+
+    // To get the last substring (or only, if delimiter is not found)
+    strings.emplace_back(str.substr(prev));
+
+    return strings;
+}
+
 void PeerRoutes::handshake(
     const drogon::HttpRequestPtr& req,
     std::function<void(const drogon::HttpResponsePtr&)>&& callback
 ) {
-    // Use private key associated with our pubkey endpoint to decrypt request body
+    // TODO this algorithm is insecure and just used for testing
+    auto parts = split_string(req->body(), "\n");
+    auto domain = parts[0];
+    auto token = parts[1];
 
-    // Store provided peer data: host, symkey, token, etc. into Peers cache
+    std::cout <<"New peer: " <<domain <<" : " <<token <<std::endl;
 
-//    auto body = drogon::utils::base64Decode(req->body()); // may contain \0
+    // Add peer with unique auth token
+    std::shared_ptr<Peer> p;
+    do {
+        p = std::make_shared<Peer>(domain, PeerAuth{"fff", token});
+    } while (!g_app->m_peers.add_peer(domain, p));
+
+    // Respond with token
+    auto resp = drogon::HttpResponse::newHttpResponse();
+    resp->setBody(p->m_auth.m_bearer_token_we_accept);
+    callback(resp);
+
+    // Actual algorithm to use:
+    // 1. Use private key associated with our pubkey endpoint to decrypt request body
+    // 2. Store provided peer data: host, symkey, tokens, etc. into Peers cache
+    // 3. Send token + symkey, encrypted with the other peer's pubkey
+
+    // Decrypt body
+//    auto encryptedBody = drogon::utils::base64Decode(req->body()); // may contain \0
 
     // Get relevant public key
 //    auto client = drogon::HttpClient::newHttpClient(remote_peer);
-//    client.request()
+//    client.request();
 
-    // Send token + symkey, encrypted with the user's pubkey
 }

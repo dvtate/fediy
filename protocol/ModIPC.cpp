@@ -28,6 +28,53 @@ ModDllIpcRequest::ModDllIpcRequest(
     this->headers = nullptr;
 }
 
+drogon::HttpMethod drogon_http_method(const std::string& method) {
+    if (method == "GET")
+        return drogon::HttpMethod::Get;
+    if (method == "POST")
+        return drogon::HttpMethod::Post;
+    if (method == "PATCH")
+        return drogon::HttpMethod::Patch;
+    if (method == "PUT")
+        return drogon::HttpMethod::Put;
+    if (method == "DELETE")
+        return drogon::HttpMethod::Delete;
+    if (method == "HEAD")
+        return drogon::HttpMethod::Head;
+    if (method == "OPTIONS")
+        return drogon::HttpMethod::Options;
+    return drogon::HttpMethod::Invalid;
+}
+
+void send_request_to_app(
+//    const struct fiy_host_info_t* host,
+    const char* app_id,
+    const fediy::fiy_request_t* request,
+    void (*callback)(const fediy::fiy_response_t*)
+) {
+    // Convert request to drogon request
+    auto req = drogon::HttpRequest::newHttpRequest();
+    req->setPath(request->path);
+    req->setBody(request->body);
+    req->setMethod(drogon_http_method(request->method));
+
+    // Send request to peer
+    g_app->m_peers.request_peer(
+        request->domain, app_id, request->user, req,
+        [callback](const drogon::HttpResponsePtr& resp) {
+            std::cout <<"request_peer gave" <<resp->statusCode() <<std::endl;
+
+            // Convert response and send it back to mod
+            if (callback == nullptr)
+                return;
+            fediy::fiy_response_t r {
+                .status = resp->getStatusCode(),
+                .body = resp->body().data()
+            };
+            callback(&r);
+        }
+    );
+}
 
 void ModDLLIPC::gen_host_info() {
     if (m_host_info != nullptr)
@@ -38,10 +85,13 @@ void ModDLLIPC::gen_host_info() {
         std::cout <<s <<std::endl;
     };
     std::string base_uri = (g_app->m_config.m_ssl ? "https://" : "http://")
-                           + g_app->m_config.m_hostname + "/" + m_mod->m_id;
+            + m_mod->m_path + '.' + g_app->m_config.m_hostname;
+
     char* cstr = new char[base_uri.size() + 1];
-    strncpy(cstr, base_uri.c_str(), base_uri.size());
+    strcpy(cstr, base_uri.c_str());
     m_host_info->base_uri = cstr;
+    m_host_info->request = send_request_to_app;
+    m_host_info->domain = g_app->m_config.m_hostname;
 }
 
 void ModDLLIPC::handle_request(
@@ -61,7 +111,6 @@ void ModDLLIPC::handle_request(
         }
     );
 }
-
 
 bool ModNetIPC::start() {
 

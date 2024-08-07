@@ -35,6 +35,7 @@ public:
             std::function<void(const drogon::HttpResponsePtr&)>&& callback
     ) = 0;
 
+
     // IPC interface
     enum class IPCType {
         SHARED_LIBRARY,     // .so file
@@ -77,7 +78,6 @@ public:
 
         this->remove_from_task_queue();
     }
-
 };
 
 // Communicates with the module by dynamically linking

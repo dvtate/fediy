@@ -43,7 +43,7 @@ struct fiy_mod_info_t {
     const char* remote_app_id;
 
     /// Handle http requests to the module
-    void (*on_request)(const struct fiy_request_t* request, fiy_callback_t callback);
+    void (*on_request)(struct fiy_request_t* request, fiy_callback_t callback);
 
     /// Peer domain changed
     void (*on_peer_domain_changed)(const char* old_domain, const char* new_domain);
@@ -76,6 +76,7 @@ typedef void (*fiy_send_request_t)(
 );
 
 struct fiy_host_info_t {
+    const char* domain;
     const char* base_uri; // <protocol>://<host>/<appid> ie - https://bodge.dev/git
     void (*log)(int level, const char* message);
     fiy_send_request_t request;

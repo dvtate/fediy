@@ -60,14 +60,16 @@ target_link_libraries(protocol_server
 
 
 add_library(demo_mod SHARED
-        modlib/example_mod.c
-        util/BackgroundProcess.cpp
-        util/BackgroundProcess.hpp
+    modlib/example_mod.c
 )
 
 
 add_library(demo_mod_cpp SHARED
-        modlib/example_mod.cpp
-        util/BackgroundProcess.cpp
-        util/BackgroundProcess.hpp
+    modlib/example_mod.cpp
+)
+
+add_library(demo_mod_mail SHARED
+    mail_mod/mod.cpp
+    mail_mod/MailBox.hpp
+    modlib/fediymod.h
 )

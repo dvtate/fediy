@@ -124,5 +124,4 @@ public:
             return now > m_expiration;
         }
     };
-
 };

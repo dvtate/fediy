@@ -235,11 +235,23 @@ void PortalRoutes::test(
     const drogon::HttpRequestPtr& req,
     std::function<void(const drogon::HttpResponsePtr&)>&& callback
 ) {
-    std::string ret;
-    ret = "Path: " + req->getPath() + "<br/>\n\n" + "OrigPath: " + req->getOriginalPath() + "<br/>\n\n";
-    ret += "Host: " + req->getHeader("Host") + "<br/>\n\n";
+//    std::string ret;
+//    ret = "Path: " + req->getPath() + "<br/>\n\n" + "OrigPath: " + req->getOriginalPath() + "<br/>\n\n";
+//    ret += "Host: " + req->getHeader("Host") + "<br/>\n\n";
+//
+//    auto resp = drogon::HttpResponse::newHttpResponse(drogon::HttpStatusCode::k200OK, drogon::ContentType::CT_TEXT_HTML);
+//    resp->setBody(std::move(ret));
+//    callback(resp);
 
-    auto resp = drogon::HttpResponse::newHttpResponse(drogon::HttpStatusCode::k200OK, drogon::ContentType::CT_TEXT_HTML);
-    resp->setBody(std::move(ret));
-    callback(resp);
+    auto client = drogon::HttpClient::newHttpClient("http://corki.dvtate.com:5050");
+    auto r = drogon::HttpRequest::newHttpRequest();
+    r->setPath("/resources/main.js");
+    client->sendRequest(r, [cb = std::move(callback)](drogon::ReqResult rr, const drogon::HttpResponsePtr& resp) {
+        if (resp == nullptr) {
+            DEBUG_LOG("client err: " <<to_string(rr));
+            cb(drogon::HttpResponse::newNotFoundResponse());
+        } else {
+            cb(resp);
+        }
+    });
 }

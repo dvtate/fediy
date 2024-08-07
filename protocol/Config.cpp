@@ -29,14 +29,16 @@ bool AppConfig::set_key(const char* section, const char* key, const char* value)
         }
         m_data_dir = value;
     } else if (strcmp(key, "hostname") == 0) {
-        // Server hostname
-        m_hostname = value;
+        // Validate
         const std::regex domain_name_pattern{ // supports subdomains and port numbers
             R"(^(?!-)[A-Za-z0-9-]+([\-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}(?:\:[0-9]{1,5})?$)"};
-
         if (!std::regex_match(value, domain_name_pattern)) {
             LOG_ERR("Config file: hostname '" << value << "' is invalid (valid example: example.com)");
         }
+
+        // Apply
+        m_hostname = (char*) malloc(strlen(value) + 1);
+        strcpy(m_hostname, value);
     } else if (strcmp(key, "ssl") == 0) {
         int b = parse_bool(value);
         if (b == -1) {
@@ -45,6 +47,13 @@ bool AppConfig::set_key(const char* section, const char* key, const char* value)
         m_ssl = b;
     } else if (strcmp(key, "salt") == 0) {
         m_salt = value;
+    } else if (strcmp(key, "port") == 0) {
+        int port = strtol(value, nullptr, 10);
+        if (port == 0 || port < 0 || port >= 65536) {
+            LOG_ERR("Config file: port should be a valid port number, not " <<value);
+        } else {
+            m_port = port;
+        }
     } else {
         LOG_ERR("Config file: invalid key: " <<key);
         return false; // invalid key

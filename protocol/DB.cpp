@@ -117,5 +117,6 @@ bool DB::add_user(const LocalUser& user, std::string password) {
     q.bindNoCopy(6, user.m_locale);
     q.bind(7, (int64_t) user.m_joined_ts);
     q.bind(8, user.m_about);
-    return q.exec();
+    auto ret = q.exec();
+    return ret;
 }
