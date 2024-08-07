@@ -84,8 +84,8 @@ void ModDLLIPC::gen_host_info() {
     m_host_info->log = [](int n, const char* s){
         std::cout <<s <<std::endl;
     };
-    std::string base_uri = (g_app->m_config.m_ssl ? "https://" : "http://")
-            + m_mod->m_path + '.' + g_app->m_config.m_hostname;
+    std::string base_uri = std::string(g_app->m_config.m_ssl ? "https://" : "http://")
+            + g_app->m_config.m_hostname + '/' + m_mod->m_path;
 
     char* cstr = new char[base_uri.size() + 1];
     strcpy(cstr, base_uri.c_str());
