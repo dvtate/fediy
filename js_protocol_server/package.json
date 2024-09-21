@@ -24,7 +24,7 @@
   "dependencies": {
     "debug": "^4.3.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "install": "^0.13.0",
     "mysql": "^2.18.1",
     "npm": "^10.8.2",
